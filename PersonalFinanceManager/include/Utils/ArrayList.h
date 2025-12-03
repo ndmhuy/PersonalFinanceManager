@@ -1,5 +1,13 @@
-#ifndef Arraylist_h
-#define Arraylist_h
+//
+//  ArrayList.h
+//  PersonalFinanceManager
+//
+//  Created by Nguyen Dinh Minh Huy on 30/11/25.
+//
+
+
+#ifndef ArrayList_h
+#define ArrayList_h
 
 #include <iostream>
 #include <stdexcept>
@@ -12,6 +20,8 @@ private:
     T *data;
     size_t size;
     size_t capacity;
+    
+    static const size_t DEFAULT_CAPACITY = 16;
     
     // Resizes the internal array when capacity is reached
     void Resize(size_t newCapacity) {
@@ -34,19 +44,19 @@ public:
     using Comparator = bool (*)(const T& a, const T& b);
     
     // Default constructor
-    ArrayList() : size(0), capacity(16) {
+    ArrayList() : size(0), capacity(DEFAULT_CAPACITY) {
         data = new T[capacity];
     }
     
     // Constructor with initial capacity
     explicit ArrayList(size_t initCap) : size(0) {
-        capacity = (initCap == 0) ? 16 : initCap;
+        capacity = (initCap == 0) ? DEFAULT_CAPACITY : initCap;
         data = new T[capacity];
     }
     
     // Constructor from an existing C-array
     ArrayList(const T* other, size_t size) : size(size) {
-        capacity = (size == 0) ? 16 : size * 2;
+        capacity = (size == 0) ? DEFAULT_CAPACITY : size * 2;
         data = new T[capacity];
         for (size_t i = 0; i < size; ++i) {
             data[i] = other[i];
@@ -207,4 +217,6 @@ public:
     }
 };
 
-#endif // !Arraylist_h
+#endif // !ArrayList_h
+
+
