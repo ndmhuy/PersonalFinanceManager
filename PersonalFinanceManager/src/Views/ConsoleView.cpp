@@ -52,3 +52,52 @@ void ConsoleView::PrintHeader(string title) {
     ResetColor();
 }
 
+void ConsoleView::PrintFooter(string message) {
+    MoveToXY(0, 23);
+    PrintLine(0, 23, 80, '-');
+    MoveToXY(2, 24);
+    SetColor(COLOR_INFO);
+    cout << message;
+    MoveToXY(0, 25);
+    ResetColor();
+}
+
+void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
+    MoveToXY(0, 23);
+    PrintLine(0, 23, 80, '-');
+    MoveToXY(2, 24);
+    SetColor(COLOR_WARNING);
+    cout << shortcuts;
+    MoveToXY(50, 24);
+    SetColor(COLOR_INFO);
+    cout << status;
+    ResetColor();
+    MoveToXY(0, 25);
+}
+
+// ===== MESSAGE IMPLEMENTATIONS =====
+
+void ConsoleView::ShowSuccess(string message) {
+    SetColor(COLOR_SUCCESS);
+    cout << "[✓] " << message << endl;
+    ResetColor();
+}
+
+void ConsoleView::ShowError(string message) {
+    SetColor(COLOR_ERROR);
+    cout << "[✗] " << message << endl;
+    ResetColor();
+}
+
+void ConsoleView::ShowWarning(string message) {
+    SetColor(COLOR_WARNING);
+    cout << "[!] " << message << endl;
+    ResetColor();
+}
+
+void ConsoleView::ShowInfo(string message) {
+    SetColor(COLOR_INFO);
+    cout << message << endl;
+    ResetColor();
+}
+
