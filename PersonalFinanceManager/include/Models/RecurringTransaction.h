@@ -11,9 +11,13 @@
 #include "Transaction.h"
 #include "Income.h"
 #include "Expense.h"
+
 #include "../Utils/Date.h"
 #include "../Utils/Enums.h"
+#include "../Utils/BinaryFileHelper.h"
 
+#include <iostream>
+#include <fstream>
 #include <string>
 
 /**
@@ -108,6 +112,21 @@ public:
     std::string ToString() const;
 
     // TODO [M1]: Add toBinary(ofstream&) and fromBinary(ifstream&) here
+    // ==========================================
+    // 6. SERIALIZATION
+    // ==========================================
+    
+    /**
+     * @brief Serializes the object to a binary stream.
+     * Order: ID -> Frequency -> StartDate -> EndDate -> LastGenDate -> WalletID -> CategoryID -> Amount -> Type -> Description
+     */
+    void ToBinary(std::ofstream& fout) const;
+
+    /**
+     * @brief Factory method to create a RecurringTransaction from a binary stream.
+     * Reads in the same order as ToBinary.
+     */
+    static RecurringTransaction* FromBinary(std::ifstream& fin);
 };
 
 #endif // !RecurringTransaction_h

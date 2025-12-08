@@ -8,6 +8,10 @@
 #ifndef IncomeSource_h
 #define IncomeSource_h
 
+#include "../Utils/BinaryFileHelper.h"
+
+#include <iostream>
+#include <fstream>
 #include <string>
 
 /**
@@ -32,8 +36,19 @@ public:
     
     // Display
     std::string ToString() const;
+    
+    // Serialization
+    /**
+     * @brief Serializes the object to a binary stream.
+     * Order: ID -> Name
+     */
+    void ToBinary(std::ofstream& fout) const;
 
-    // TODO [M1]: Add toBinary(ofstream&) and fromBinary(ifstream&) here
+    /**
+     * @brief Factory method to create a IncomeSource from a binary stream.
+     * Reads in the same order as ToBinary.
+     */
+    static IncomeSource* FromBinary(std::ifstream& fin);
 };
 
 #endif // !IncomeSource_h

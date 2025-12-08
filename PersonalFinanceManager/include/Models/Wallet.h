@@ -8,8 +8,11 @@
 #ifndef Wallet_h
 #define Wallet_h
 
+#include "../Utils/BinaryFileHelper.h"
+
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <iomanip>
 
@@ -64,7 +67,21 @@ public:
     // ==========================================
     std::string ToString() const;
 
-    // TODO [M1]: Add toBinary(ofstream&) and fromBinary(ifstream&) here
+    // ==========================================
+    // 5. SERIALIZATION
+    // ==========================================
+    
+    /**
+     * @brief Serializes the object to a binary stream.
+     * Order: ID -> Name -> Balance
+     */
+    void ToBinary(std::ofstream& fout) const;
+
+    /**
+     * @brief Factory method to create a Wallet from a binary stream.
+     * Reads in the same order as ToBinary.
+     */
+    static Wallet* FromBinary(std::ifstream& fin);
 };
 
 #endif // !Wallet_h

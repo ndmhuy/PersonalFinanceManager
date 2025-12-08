@@ -25,3 +25,16 @@ void IncomeSource::SetName(const std::string& n) { name = n; }
 std::string IncomeSource::ToString() const {
     return name;
 }
+
+// Serialization
+void IncomeSource::ToBinary(std::ofstream& fout) const {
+    BinaryFileHelper::WriteString(fout, id);
+    BinaryFileHelper::WriteString(fout, name);
+}
+
+IncomeSource* IncomeSource::FromBinary(std::ifstream& fin) {
+    std::string id = BinaryFileHelper::ReadString(fin);
+    std::string name = BinaryFileHelper::ReadString(fin);
+    
+    return new IncomeSource(id, name);
+}

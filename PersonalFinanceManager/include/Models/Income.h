@@ -23,6 +23,8 @@ public:
      * Automatically sets TransactionType to Income.
      */
     Income(std::string id, std::string walletId, std::string catId, double amount, Date date, std::string desc);
+    
+    // Serialization: We use the Base Transaction::ToBinary and Transaction::FromBinary
 };
 
 #endif // !Income_h

@@ -25,3 +25,16 @@ void Category::SetName(const std::string& n) { name = n; }
 std::string Category::ToString() const {
     return name;
 }
+
+// Serialization
+void Category::ToBinary(std::ofstream& fout) const {
+    BinaryFileHelper::WriteString(fout, id);
+    BinaryFileHelper::WriteString(fout, name);
+}
+
+Category* Category::FromBinary(std::ifstream& fin) {
+    std::string id = BinaryFileHelper::ReadString(fin);
+    std::string name = BinaryFileHelper::ReadString(fin);
+    
+    return new Category(id, name);
+}

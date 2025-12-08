@@ -6,6 +6,9 @@
 //
 
 #include "../../include/Models/Transaction.h"
+#include "../../include/Models/Income.h"
+#include "../../include/Models/Expense.h"
+
 
 // ==========================================
 // 1. CONSTRUCTORS
@@ -54,4 +57,40 @@ std::string Transaction::ToString() const {
        << std::fixed << std::setprecision(2) << amount
        << " | " << description;
     return ss.str();
+}
+
+// ==========================================
+// 5. SERIALIZATION (CORE LOGIC)
+// ==========================================
+
+void Transaction::ToBinary(std::ofstream& fout) const {
+    // 1. Write the Type Identifier FIRST (for polymorphism)
+    BinaryFileHelper::WriteInt(fout, static_cast<int>(type));
+    
+    // 2. Write common fields
+    BinaryFileHelper::WriteString(fout, id);
+    BinaryFileHelper::WriteString(fout, walletId);
+    BinaryFileHelper::WriteString(fout, categoryId);
+    BinaryFileHelper::WriteDouble(fout, amount);
+    BinaryFileHelper::WriteDate(fout, date);
+    BinaryFileHelper::WriteString(fout, description);
+}
+
+Transaction* Transaction::FromBinary(std::ifstream& fin) {
+    // 1. Read the Type Identifier
+    int typeCode = BinaryFileHelper::ReadInt(fin);
+    TransactionType type = static_cast<TransactionType>(typeCode);
+    
+    // 2. Read Common Fields
+    std::string id = BinaryFileHelper::ReadString(fin);
+    std::string wId = BinaryFileHelper::ReadString(fin);
+    std::string catId = BinaryFileHelper::ReadString(fin);
+    double amt = BinaryFileHelper::ReadDouble(fin);
+    Date d = BinaryFileHelper::ReadDate(fin);
+    std::string desc = BinaryFileHelper::ReadString(fin);
+    
+    // 3. Factory Logic: Decide which class to instantiate
+    if (type == TransactionType::Income)
+        return new Income(id, wId, catId, amt, d, desc);
+    else return new Expense(id, wId, catId, amt, d, desc);
 }

@@ -49,6 +49,24 @@ void Wallet::SubtractAmount(double amount) {
 std::string Wallet::ToString() const {
     std::stringstream ss;
     ss << name << " (ID: " << id << ") - Balance: "
-       << std::fixed << std::setprecision(2) << balance;
+    << std::fixed << std::setprecision(2) << balance;
     return ss.str();
+}
+    
+// ==========================================
+// 5. SERIALIZATION
+// ==========================================
+
+void Wallet::ToBinary(std::ofstream& fout) const {
+    BinaryFileHelper::WriteString(fout, id);
+    BinaryFileHelper::WriteString(fout, name);
+    BinaryFileHelper::WriteDouble(fout, balance);
+}
+
+
+Wallet* Wallet::FromBinary(std::ifstream& fin) {
+    std::string id = BinaryFileHelper::ReadString(fin);
+    std::string name = BinaryFileHelper::ReadString(fin);
+    double balance = BinaryFileHelper::ReadDouble(fin);
+    return new Wallet(id, name, balance);
 }

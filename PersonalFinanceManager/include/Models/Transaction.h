@@ -10,9 +10,11 @@
 
 #include "../Utils/Date.h"
 #include "../Utils/Enums.h"
+#include "../Utils/BinaryFileHelper.h"
 
-#include <string>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <iomanip>
 #include <sstream>
 
@@ -82,7 +84,21 @@ public:
      */
     virtual std::string ToString() const;
     
-    // TODO [M1]: Add toBinary(ofstream&) and fromBinary(ifstream&) here
+    // ==========================================
+    // 5. SERIALIZATION
+    // ==========================================
+    
+    /**
+     * @brief Serializes the object to a binary stream.
+     * Order: Type -> ID -> WalletID -> CategoryID -> amount -> date -> description
+     */
+    virtual void ToBinary(std::ofstream& fout) const;
+
+    /**
+     * @brief Factory method to create a Transaction from a binary stream.
+     * Reads in the same order as ToBinary.
+     */
+    static Transaction* FromBinary(std::ifstream& fin);
 };
 
 #endif // !Transaction_h
