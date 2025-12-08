@@ -20,9 +20,7 @@ static bool IsStringEmptyOrWhitespace(const std::string& str) {
     return str.find_first_not_of(' ') == std::string::npos;
 }
 
-// ==========================================
 // 1. CONSTRUCTOR & DESTRUCTOR
-// ==========================================
 
 AppController::AppController() {
     // 1. Initialize the Storage Lists (The "Tables")
@@ -86,9 +84,7 @@ AppController::~AppController() {
     std::cout << "[System] Memory cleaned up successfully.\n";
 }
 
-// ==========================================
 // 2. DATA PERSISTENCE
-// ==========================================
 
 void AppController::LoadData() {
     // TODO [M1]: Implement loading logic using BinaryFileHelper
@@ -101,9 +97,7 @@ void AppController::SaveData() {
     // std::cout << "[System] Data saved to disk.\n";
 }
 
-// ==========================================
 // 3. WALLET LOGIC
-// ==========================================
 
 void AppController::AddWallet(const std::string& name, double initialBalance) {
     // Validation
@@ -147,9 +141,7 @@ double AppController::GetTotalBalance() const {
     return total;
 }
 
-// ==========================================
 // 4. MASTER DATA (CATEGORIES & SOURCES)
-// ==========================================
 
 void AppController::AddCategory(const std::string& name) {
     if (IsStringEmptyOrWhitespace(name)) {
@@ -189,9 +181,7 @@ IncomeSource* AppController::GetIncomeSourceById(const std::string& id) {
     return (s != nullptr) ? *s : nullptr;
 }
 
-// ==========================================
 // 5. TRANSACTION CORE LOGIC
-// ==========================================
 
 void AppController::AddTransaction(double amount, std::string walletId, std::string categoryOrSourceId, TransactionType type, Date date, std::string description) {
     // 1. Validate Amount
@@ -278,9 +268,7 @@ bool AppController::DeleteTransaction(const std::string& transactionId) {
     return true;
 }
 
-// ==========================================
 // 6. AUTOMATION & REPORTING
-// ==========================================
 
 void AppController::AddRecurringTransaction(Frequency freq, Date startDate, Date endDate, std::string walletId, std::string categoryId, double amount, TransactionType type, std::string desc) {
     // Validation
