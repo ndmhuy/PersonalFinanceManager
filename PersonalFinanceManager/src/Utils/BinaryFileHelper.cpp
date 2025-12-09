@@ -11,29 +11,29 @@
 // WRITING FUNCTIONS
 // ==========================================
 
-static void WriteInt(std::ofstream& fout, int value) {
+void BinaryFileHelper::WriteInt(std::ofstream& fout, int value) {
     fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 
-static void WriteSizeT(std::ofstream& fout, size_t value) {
+void BinaryFileHelper::WriteSizeT(std::ofstream& fout, size_t value) {
     fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 
-static void WriteDouble(std::ofstream& fout, double value) {
+void BinaryFileHelper::WriteDouble(std::ofstream& fout, double value) {
     fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 
-static void WriteBool(std::ofstream& fout, bool value) {
+void BinaryFileHelper::WriteBool(std::ofstream& fout, bool value) {
     fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 
-static void WriteString(std::ofstream& fout, const std::string& value) {
+void BinaryFileHelper::WriteString(std::ofstream& fout, const std::string& value) {
     size_t length = value.size();
     WriteSizeT(fout, length);
     if (length > 0) fout.write(value.c_str(), length);
 }
 
-static void WriteDate(std::ofstream& fout, const Date& value) {
+void BinaryFileHelper::WriteDate(std::ofstream& fout, const Date& value) {
     WriteInt(fout, value.GetDay());
     WriteInt(fout, value.GetMonth());
     WriteInt(fout, value.GetYear());
@@ -43,31 +43,31 @@ static void WriteDate(std::ofstream& fout, const Date& value) {
 // READING FUNCTIONS
 // ==========================================
 
-static int ReadInt(std::ifstream& fin) {
+int BinaryFileHelper::ReadInt(std::ifstream& fin) {
     int value = 0;
     fin.read(reinterpret_cast<char*>(&value), sizeof(value));
     return value;
 }
 
-static size_t ReadSizeT(std::ifstream& fin) {
+size_t BinaryFileHelper::ReadSizeT(std::ifstream& fin) {
     size_t value = 0;
     fin.read(reinterpret_cast<char*>(&value), sizeof(value));
     return value;
 }
 
-static double ReadDouble(std::ifstream& fin) {
+double BinaryFileHelper::ReadDouble(std::ifstream& fin) {
     double value = 0.0;
     fin.read(reinterpret_cast<char*>(&value), sizeof(value));
     return value;
 }
 
-static bool ReadBool(std::ifstream& fin) {
+bool BinaryFileHelper::ReadBool(std::ifstream& fin) {
     bool value = false;
     fin.read(reinterpret_cast<char*>(&value), sizeof(value));
     return value;
 }
 
-static std::string ReadString(std::ifstream& fin) {
+std::string BinaryFileHelper::ReadString(std::ifstream& fin) {
     size_t length = ReadSizeT(fin);
     
     char* buffer = new char[length + 1];
@@ -79,7 +79,7 @@ static std::string ReadString(std::ifstream& fin) {
     return value;
 }
 
-static Date ReadDate(std::ifstream& fin) {
+Date BinaryFileHelper::ReadDate(std::ifstream& fin) {
     int d = ReadInt(fin);
     int m = ReadInt(fin);
     int y = ReadInt(fin);
