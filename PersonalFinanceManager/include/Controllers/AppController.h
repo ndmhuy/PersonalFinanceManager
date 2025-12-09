@@ -61,15 +61,15 @@ private:
     void ProcessRecurringTransactions();
 
 public:
-    // ==========================================
+
     // 1. CONSTRUCTOR & DESTRUCTOR
-    // ==========================================
+
     AppController();
     ~AppController();
 
-    // ==========================================
+ 
     // 2. DATA PERSISTENCE
-    // ==========================================
+
     /**
      * @brief Loads all data from binary files into memory.
      * Order: Categories/Sources -> Wallets -> Transactions.
@@ -81,15 +81,15 @@ public:
      */
     void SaveData();
 
-    // ==========================================
+
     // 3. WALLET LOGIC
-    // ==========================================
+
     /**
      * @brief Creates a new wallet and adds it to both List and Map.
      * @param name Display name of the wallet.
      * @param initialBalance Starting amount.
      */
-    void AddWallet(const std::string& name, double initialBalance);
+        void AddWallet(const std::string& name, double initialBalance);
 
     /**
      * @brief Finds a wallet by its unique ID.
@@ -107,9 +107,8 @@ public:
      */
     double GetTotalBalance() const;
 
-    // ==========================================
-    // 4. MASTER DATA (CATEGORIES & SOURCES)
-    // ==========================================
+     // 4. MASTER DATA (CATEGORIES & SOURCES)
+
     void AddCategory(const std::string& name);
     Category* GetCategoryById(const std::string& id);
     ArrayList<Category*>* GetCategoriesList() const { return categoriesList; }
@@ -118,9 +117,8 @@ public:
     IncomeSource* GetIncomeSourceById(const std::string& id);
     ArrayList<IncomeSource*>* GetIncomeSourcesList() const { return incomeSourcesList; }
 
-    // ==========================================
     // 5. TRANSACTION CORE LOGIC
-    // ==========================================
+
     /**
      * @brief Creates a transaction and automatically updates the Wallet balance.
      * @param amount The value of the transaction (must be > 0).
@@ -140,9 +138,7 @@ public:
 
     ArrayList<Transaction*>* GetTransactions() const { return transactions; }
     
-    // ==========================================
     // 6. AUTOMATION & REPORTING
-    // ==========================================
     /**
      * @brief Schedules a recurring transaction to happen automatically in the future.
      */
