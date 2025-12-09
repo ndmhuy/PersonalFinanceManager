@@ -15,6 +15,10 @@ static void WriteInt(std::ofstream& fout, int value) {
     fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 
+static void WriteSizeT(std::ofstream& fout, size_t value) {
+    fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
+}
+
 static void WriteDouble(std::ofstream& fout, double value) {
     fout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
@@ -25,7 +29,7 @@ static void WriteBool(std::ofstream& fout, bool value) {
 
 static void WriteString(std::ofstream& fout, const std::string& value) {
     size_t length = value.size();
-    fout.write(reinterpret_cast<const char*>(&length), sizeof(length));
+    WriteSizeT(fout, length);
     if (length > 0) fout.write(value.c_str(), length);
 }
 
@@ -45,6 +49,12 @@ static int ReadInt(std::ifstream& fin) {
     return value;
 }
 
+static size_t ReadSizeT(std::ifstream& fin) {
+    size_t value = 0;
+    fin.read(reinterpret_cast<char*>(&value), sizeof(value));
+    return value;
+}
+
 static double ReadDouble(std::ifstream& fin) {
     double value = 0.0;
     fin.read(reinterpret_cast<char*>(&value), sizeof(value));
@@ -58,8 +68,7 @@ static bool ReadBool(std::ifstream& fin) {
 }
 
 static std::string ReadString(std::ifstream& fin) {
-    size_t length = 0;
-    fin.read(reinterpret_cast<char*>(&length), sizeof(length));
+    size_t length = ReadSizeT(fin);
     
     char* buffer = new char[length + 1];
     fin.read(buffer, length);

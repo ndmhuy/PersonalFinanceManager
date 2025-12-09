@@ -11,6 +11,13 @@
 #include <iomanip>
 #include <algorithm>
 
+// --- FILE PATH CONSTANTS ---
+const std::string FILE_WALLETS = "data/wallets.bin";
+const std::string FILE_CATEGORIES = "data/categories.bin";
+const std::string FILE_SOURCES = "data/sources.bin";
+const std::string FILE_TRANSACTIONS = "data/transactions.bin";
+const std::string FILE_RECURRING = "data/recurring.bin";
+
 // ==========================================
 // STATIC HELPER FUNCTIONS
 // ==========================================
@@ -36,6 +43,8 @@ AppController::AppController() {
     this->walletsMap = new HashMap<std::string, Wallet*>();
     this->categoriesMap = new HashMap<std::string, Category*>();
     this->incomeSourcesMap = new HashMap<std::string, IncomeSource*>();
+    this->transactionsMap = new HashMap<std::string, Transaction*>();
+    this->recurringTransactionsMap = new HashMap<std::string, RecurringTransaction*>();
 
     // 3. Load existing data from binary files
     LoadData();
@@ -54,19 +63,21 @@ AppController::~AppController() {
         for (size_t i = 0; i < transactions->Count(); ++i) delete transactions->Get(i);
         delete transactions; // Then delete the list container
     }
+    // Only delete the Map container, not the contents (already deleted via list)
+    if (transactionsMap) delete transactionsMap;
 
     // 3. Clean up Recurring Transactions
     if (recurringTransactions) {
         for (size_t i = 0; i < recurringTransactions->Count(); ++i) delete recurringTransactions->Get(i);
         delete recurringTransactions;
     }
+    if (recurringTransactionsMap) delete recurringTransactionsMap;
 
     // 4. Clean up Wallets
     if (walletsList) {
         for (size_t i = 0; i < walletsList->Count(); ++i) delete walletsList->Get(i);
         delete walletsList;
     }
-    // Only delete the Map container, not the contents (already deleted via list)
     if (walletsMap) delete walletsMap;
 
     // 5. Clean up Categories
@@ -91,14 +102,145 @@ AppController::~AppController() {
 // ==========================================
 
 void AppController::LoadData() {
-    // TODO [M1]: Implement loading logic using BinaryFileHelper
     // Order: Categories -> Wallets -> Transactions
-    // std::cout << "[System] Data loaded from disk.\n";
+    
+    // ---------------------------------------------------------
+    // 1. Load CATEGORIES
+    // ---------------------------------------------------------
+    std::ifstream fCat(FILE_CATEGORIES, std::ios::binary);
+    if (fCat.is_open()) {
+        size_t count = BinaryFileHelper::ReadSizeT(fCat);
+        for (size_t i = 0; i < count; ++i) {
+            Category* c = Category::FromBinary(fCat);
+            categoriesList->Add(c);
+            categoriesMap->Put(c->GetId(), c);
+        }
+        fCat.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 2. Load INCOME SOURCES
+    // ---------------------------------------------------------
+    std::ifstream fSrc(FILE_SOURCES, std::ios::binary);
+    if (fSrc.is_open()) {
+        size_t count = BinaryFileHelper::ReadSizeT(fSrc);
+        for (size_t i = 0; i < count; ++i) {
+            IncomeSource* s = IncomeSource::FromBinary(fSrc);
+            incomeSourcesList->Add(s);
+            incomeSourcesMap->Put(s->GetId(), s);
+        }
+        fSrc.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 3. Load WALLETS
+    // ---------------------------------------------------------
+    std::ifstream fWal(FILE_WALLETS, std::ios::binary);
+    if (fWal.is_open()) {
+        size_t count = BinaryFileHelper::ReadSizeT(fWal);
+        for (size_t i = 0; i < count; ++i) {
+            Wallet* w = Wallet::FromBinary(fWal);
+            walletsList->Add(w);
+            walletsMap->Put(w->GetId(), w);
+        }
+        fWal.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 4. Load TRANSACTIONS
+    // ---------------------------------------------------------
+    std::ifstream fTrx(FILE_TRANSACTIONS, std::ios::binary);
+    if (fTrx.is_open()) {
+        size_t count = BinaryFileHelper::ReadSizeT(fTrx);
+        for (size_t i = 0; i < count; ++i) {
+            Transaction* t = Transaction::FromBinary(fTrx);
+            transactions->Add(t);
+            transactionsMap->Put(t->GetId(), t);
+        }
+        fTrx.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 5. Load RECURRING TRANSACTIONS
+    // ---------------------------------------------------------
+    std::ifstream fRec(FILE_RECURRING, std::ios::binary);
+    if (fRec.is_open()) {
+        size_t count = BinaryFileHelper::ReadSizeT(fRec);
+        for (size_t i = 0; i < count; ++i) {
+            RecurringTransaction* rt = RecurringTransaction::FromBinary(fRec);
+            recurringTransactions->Add(rt);
+            recurringTransactionsMap->Put(rt->GetId(), rt);
+        }
+        fRec.close();
+    }
+    
+    std::cout << "[System] Data loaded from disk.\n";
 }
 
 void AppController::SaveData() {
-    // TODO [M1]: Implement saving logic using BinaryFileHelper
-    // std::cout << "[System] Data saved to disk.\n";
+    // Order: Categories -> Wallets -> Transactions
+    
+    // ---------------------------------------------------------
+    // 1. Save CATEGORIES
+    // ---------------------------------------------------------
+    std::ofstream fCat(FILE_CATEGORIES, std::ios::binary);
+    if (fCat.is_open()) {
+        size_t count = categoriesList->Count();
+        BinaryFileHelper::WriteSizeT(fCat, count);
+        for (size_t i = 0; i < count; ++i)
+            categoriesList->Get(i)->ToBinary(fCat);
+        fCat.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 2. Save INCOME SOURCES
+    // ---------------------------------------------------------
+    std::ofstream fSrc(FILE_SOURCES, std::ios::binary);
+    if (fSrc.is_open()) {
+        size_t count = incomeSourcesList->Count();
+        BinaryFileHelper::WriteSizeT(fSrc, count);
+        for (size_t i = 0; i < count; ++i)
+            incomeSourcesList->Get(i)->ToBinary(fSrc);
+        fSrc.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 3. Save WALLETS
+    // ---------------------------------------------------------
+    std::ofstream fWal(FILE_WALLETS, std::ios::binary);
+    if (fWal.is_open()) {
+        size_t count = walletsList->Count();
+        BinaryFileHelper::WriteSizeT(fWal, count);
+        for (size_t i = 0; i < count; ++i)
+            walletsList->Get(i)->ToBinary(fWal);
+        fWal.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 4. Save TRANSACTIONS
+    // ---------------------------------------------------------
+    std::ofstream fTrx(FILE_TRANSACTIONS, std::ios::binary);
+    if (fTrx.is_open()) {
+        size_t count = transactions->Count();
+        BinaryFileHelper::WriteSizeT(fTrx, count);
+        for (size_t i = 0; i < count; ++i)
+            transactions->Get(i)->ToBinary(fTrx);
+        fTrx.close();
+    }
+    
+    // ---------------------------------------------------------
+    // 5. Save RECURRING TRANSACTIONS
+    // ---------------------------------------------------------
+    std::ofstream fRec(FILE_RECURRING, std::ios::binary);
+    if (fRec.is_open()) {
+        size_t count = recurringTransactions->Count();
+        BinaryFileHelper::WriteSizeT(fRec, count);
+        for (size_t i = 0; i < count; ++i)
+            recurringTransactions->Get(i)->ToBinary(fRec);
+        fRec.close();
+    }
+    
+    std::cout << "[System] Data saved to disk.\n";
 }
 
 // ==========================================
@@ -122,7 +264,10 @@ void AppController::AddWallet(const std::string& name, double initialBalance) {
 
     // ID Generation
     std::string prefix = EnumHelper::IdPrefixToString(IdPrefix::Wallet);
-    std::string newId = IdGenerator::GenerateId(prefix);
+    std::string newId;
+    do {
+        newId = IdGenerator::GenerateId(prefix);
+    } while (walletsMap->ContainsKey(newId));
 
     // Create Object
     Wallet* newWallet = new Wallet(newId, name, initialBalance);
@@ -158,7 +303,10 @@ void AppController::AddCategory(const std::string& name) {
     }
 
     std::string prefix = EnumHelper::IdPrefixToString(IdPrefix::Category);
-    std::string id = IdGenerator::GenerateId(prefix);
+    std::string id;
+    do {
+        id = IdGenerator::GenerateId(prefix);
+    } while (categoriesMap->ContainsKey(id));
     
     Category* obj = new Category(id, name);
     categoriesMap->Put(id, obj);
@@ -177,7 +325,10 @@ void AppController::AddIncomeSource(const std::string& name) {
     }
     
     std::string prefix = EnumHelper::IdPrefixToString(IdPrefix::IncomeSource);
-    std::string id = IdGenerator::GenerateId(prefix);
+    std::string id;
+    do {
+        id = IdGenerator::GenerateId(prefix);
+    } while (incomeSourcesMap->ContainsKey(id));
     
     IncomeSource* obj = new IncomeSource(id, name);
     incomeSourcesMap->Put(id, obj);
@@ -222,7 +373,10 @@ void AppController::AddTransaction(double amount, std::string walletId, std::str
 
     // 4. Create Transaction
     std::string prefix = EnumHelper::IdPrefixToString(IdPrefix::Transaction);
-    std::string transId = IdGenerator::GenerateId(prefix);
+    std::string transId;
+    do {
+        transId = IdGenerator::GenerateId(prefix);
+    } while (transactionsMap->ContainsKey(transId));
 
     Transaction* newTrans = nullptr;
 
@@ -235,6 +389,7 @@ void AppController::AddTransaction(double amount, std::string walletId, std::str
     }
 
     transactions->Add(newTrans);
+    transactionsMap->Put(transId, newTrans);
     
     std::cout << "[Success] Transaction added. New Wallet Balance: "
               << std::fixed << std::setprecision(0) << wallet->GetBalance() << "\n";
@@ -274,6 +429,7 @@ bool AppController::DeleteTransaction(const std::string& transactionId) {
 
     // 3. Remove and Delete
     transactions->RemoveAt(foundIndex);
+    transactionsMap->Remove(transactionId);
     delete target; // Important: Free memory to avoid leaks
     return true;
 }
@@ -300,7 +456,10 @@ void AppController::AddRecurringTransaction(Frequency freq, Date startDate, Date
     }
 
     std::string prefix = EnumHelper::IdPrefixToString(IdPrefix::Recurring);
-    std::string id = IdGenerator::GenerateId(prefix);
+    std::string id;
+    do {
+        id = IdGenerator::GenerateId(prefix);
+    } while (recurringTransactionsMap->ContainsKey(id));
     
     // Create and Store
     RecurringTransaction* rt = new RecurringTransaction(id, freq, startDate, endDate, walletId, categoryId, amount, type, desc);
@@ -324,7 +483,10 @@ void AppController::ProcessRecurringTransactions() {
 
             // Generate a real transaction ID
             std::string prefix = EnumHelper::IdPrefixToString(IdPrefix::Transaction);
-            std::string newTransId = IdGenerator::GenerateId(prefix);
+            std::string newTransId;
+            do {
+                newTransId = IdGenerator::GenerateId(prefix);
+            } while (transactionsMap->ContainsKey(newTransId));
             
             // Create the real transaction
             Transaction* autoTrans = rt->GenerateTransaction(newTransId, today);

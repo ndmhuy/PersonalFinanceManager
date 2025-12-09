@@ -10,6 +10,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 // Include Utils
 #include "../Utils/ArrayList.h"
@@ -45,6 +46,8 @@ private:
     HashMap<std::string, Wallet*>* walletsMap;
     HashMap<std::string, Category*>* categoriesMap;
     HashMap<std::string, IncomeSource*>* incomeSourcesMap;
+    HashMap<std::string, Transaction*>* transactionsMap;
+    HashMap<std::string, RecurringTransaction*>* recurringTransactionsMap;
 
     // --- Iteration Lists (For UI Menus) ---
     ArrayList<Wallet*>* walletsList;

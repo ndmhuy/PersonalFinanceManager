@@ -21,6 +21,7 @@ public:
     // ==========================================
     
     static void WriteInt(std::ofstream& fout, int value);
+    static void WriteSizeT(std::ofstream& fout, size_t value);
     static void WriteDouble(std::ofstream& fout, double value);
     static void WriteBool(std::ofstream& fout, bool value);
     /// Write std::string in format: [Length (size_t)] + [Characters]
@@ -33,6 +34,7 @@ public:
     // ==========================================
     
     static int ReadInt(std::ifstream& fin);
+    static size_t ReadSizeT(std::ifstream& fin);
     static double ReadDouble(std::ifstream& fin);
     static bool ReadBool(std::ifstream& fin);
     /// Read std::string in format: [Length (size_t)] + [Characters]
