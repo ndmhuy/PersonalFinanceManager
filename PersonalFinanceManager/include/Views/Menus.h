@@ -22,22 +22,22 @@ public:
     /// @return char User's submenu selection
     char DisplayExpenseMenu();
 
-    // ===== INCOME MENU =====
+    //NCOME MENU
     /// @brief Displays income management menu
     /// @return char User's submenu selection
     char DisplayIncomeMenu();
 
-    // ===== WALLET MENU =====
+    //WALLET MENU
     /// @brief Displays wallet management menu
     /// @return char User's submenu selection
     char DisplayWalletMenu();
 
-    // ===== REPORTS MENU =====
+    //REPORTS MENU
     /// @brief Displays reports and analytics menu
     /// @return char User's submenu selection
     char DisplayReportsMenu();
 
-    // ===== MENU TEXT CONSTANTS =====
+    //MENU TEXT CONSTANTS
     // Main Dashboard Menu
     static const string MAIN_MENU_TITLE;
     static const string MAIN_MENU_1;

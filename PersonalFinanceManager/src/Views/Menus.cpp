@@ -2,10 +2,10 @@
 #include <conio.h>
 #include <iostream>
 
-// ===== CONSTRUCTOR =====
+//CONSTRUCTOR
 Menus::Menus() {}
 
-// ===== MAIN MENU IMPLEMENTATION =====
+//MAIN MENU IMPLEMENTATION
 char Menus::DisplayMainMenu() {
     view.ClearScreen();
     view.PrintHeader(MAIN_MENU_TITLE);
@@ -25,7 +25,7 @@ char Menus::DisplayMainMenu() {
     return _getch();
 }
 
-// ===== EXPENSE MENU IMPLEMENTATION =====
+//EXPENSE MENU IMPLEMENTATION
 char Menus::DisplayExpenseMenu() {
     view.ClearScreen();
     view.PrintHeader(EXPENSE_MENU_TITLE);
@@ -43,7 +43,7 @@ char Menus::DisplayExpenseMenu() {
     return _getch();
 }
 
-// ===== INCOME MENU IMPLEMENTATION =====
+//INCOME MENU IMPLEMENTATION
 char Menus::DisplayIncomeMenu() {
     view.ClearScreen();
     view.PrintHeader(INCOME_MENU_TITLE);
@@ -61,7 +61,7 @@ char Menus::DisplayIncomeMenu() {
     return _getch();
 }
 
-// ===== WALLET MENU IMPLEMENTATION =====
+//WALLET MENU IMPLEMENTATION
 char Menus::DisplayWalletMenu() {
     view.ClearScreen();
     view.PrintHeader(WALLET_MENU_TITLE);
@@ -77,7 +77,7 @@ char Menus::DisplayWalletMenu() {
     return _getch();
 }
 
-// ===== REPORTS MENU IMPLEMENTATION =====
+//REPORTS MENU IMPLEMENTATION
 char Menus::DisplayReportsMenu() {
     view.ClearScreen();
     view.PrintHeader(REPORTS_MENU_TITLE);
@@ -95,7 +95,7 @@ char Menus::DisplayReportsMenu() {
     return _getch();
 }
 
-// ===== STRING CONSTANTS =====
+//STRING CONSTANTS
 // Main Menu
 const string Menus::MAIN_MENU_TITLE = "PERSONAL FINANCE MANAGER - MAIN MENU";
 const string Menus::MAIN_MENU_1 = "1. Income Management";
