@@ -101,6 +101,8 @@ AppController::~AppController() {
 // 2. DATA PERSISTENCE
 // ==========================================
 
+// TODO [M1] : Huy check chỗ này nhé hihi
+
 void AppController::LoadData() {
     // Order: Categories -> Wallets -> Transactions
     
@@ -167,6 +169,7 @@ void AppController::LoadData() {
     std::cout << "[System] Data loaded from disk.\n";
 }
 
+// Chỗ này save Data nè Huy
 void AppController::SaveData() {
     // 1. Save CATEGORIES
     std::ofstream fCat(FILE_CATEGORIES, std::ios::binary);
