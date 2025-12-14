@@ -12,12 +12,12 @@ private:
 public:
     Menus();
 
-    // ===== MAIN MENU =====
+    //MAIN MENU
     /// @brief Displays main menu and returns user choice (1-5)
     /// @return char User's menu selection
     char DisplayMainMenu();
 
-    // ===== EXPENSE MENU =====
+    //EXPENSE MENU
     /// @brief Displays expense management menu
     /// @return char User's submenu selection
     char DisplayExpenseMenu();

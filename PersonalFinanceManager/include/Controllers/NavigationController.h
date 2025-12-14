@@ -41,6 +41,12 @@ private:
     void ShowWalletFlow();
     void ShowReportsFlow();
 
+    // Expense handlers
+    void HandleAddExpense();
+    void HandleViewExpenses();
+    void HandleEditExpense();
+    void HandleDeleteExpense();
+
     // Helper: show message and wait for key
     void PauseWithMessage(const std::string& msg);
 };
