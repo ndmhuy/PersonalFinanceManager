@@ -153,19 +153,25 @@ void ConsoleView::PrintTableHeader(string columns[], int colWidths[], int numCol
     }
     cout << endl;
 
-    PrintTableSeparator();
+    PrintTableSeparator(colWidths,numCols);
 }
 
-void ConsoleView::PrintTableRow(const string col1, const string col2, const string col3) {
-    // colWidths[] = {25, 25, 15}
-    cout << "|" << left  << setw(25) << col1;  // Column 1: exactly 25
-    cout << "|" << right << setw(25) << col2;  // Column 2: exactly 25
-    cout << "|" << right << setw(15) << col3 << "|" << endl;  // Column 3: exactly 15
+void ConsoleView::PrintTableRow(const string data[], const int colWidths[], int numCols) {
+    cout << "|";
+    for (int i = 0; i < numCols; i++) {
+        // Left-align all columns and pad to the specified width
+        cout << left << setw(colWidths[i]) << data[i] << "|";
+    }
+    cout << endl;
 }
 
-void ConsoleView::PrintTableSeparator() {
-    // 25 + 25 + 15 + 4 ('+' at 4 places) = 79
-    cout << "+-------------------------+-------------------------+---------------+" << endl;
+void ConsoleView::PrintTableSeparator(const int colWidths[], int numCols) {
+    cout << "+";
+    for (int i = 0; i < numCols; i++) {
+        for (int j = 0; j < colWidths[i]; j++) cout << "-";
+        cout << "+";
+    }
+    cout << endl;
 }
 
 string ConsoleView::FormatCurrency(long amount) {
