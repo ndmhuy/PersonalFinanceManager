@@ -47,6 +47,23 @@ private:
     void HandleEditExpense();
     void HandleDeleteExpense();
 
+    // Wallet handlers
+    void HandleCreateWallet();
+    void HandleViewWallets();
+    void HandleDeleteWallet();
+
+    // Reports handlers
+    void HandleMonthlySummary();
+    void HandleSpendingByCategory();
+    void HandleIncomeVsExpense();
+    void HandleWalletBalanceOverview();
+
+    // Income handlers
+    void HandleAddIncome();
+    void HandleViewIncome();
+    void HandleEditIncome();
+    void HandleDeleteIncome();
+
     // Helper: show message and wait for key
     void PauseWithMessage(const std::string& msg);
 };
