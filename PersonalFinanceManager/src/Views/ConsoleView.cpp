@@ -1,26 +1,23 @@
-#include "../../include/Views/ConsoleView.h"
-#include <iomanip>
+#include "Views/ConsoleView.h"
+#include "Utils/PlatformUtils.h"
 #include <sstream>
-
-using namespace std;
 
 //CONSOLE CONTROL IMPLEMENTATIONS
 
 void ConsoleView::MoveToXY(int x, int y) {
-    COORD coord = {(SHORT)x, (SHORT)y};
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    MoveCursor(x, y);
 }
 
 void ConsoleView::SetColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)color);
+    SetConsoleColor(color);
 }
 
 void ConsoleView::ClearScreen() {
-    system("cls");
+    ::ClearScreen();
 }
 
 void ConsoleView::ResetColor() {
-    SetColor(COLOR_NORMAL);
+    SetConsoleColor(COLOR_NORMAL);
 }
 
 //DRAWING IMPLEMENTATIONS
@@ -28,34 +25,34 @@ void ConsoleView::ResetColor() {
 void ConsoleView::PrintLine(int x, int y, int length, char ch) {
     MoveToXY(x, y);
     for (int i = 0; i < length; i++) {
-        cout << ch;
+        std::cout << ch;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 void ConsoleView::PrintBox(int x, int y, int width, int height) {
     // Top border: +-----+
     MoveToXY(x, y);
-    cout << "+";
-    for (int i = 0; i < width - 2; i++) cout << "-";
-    cout << "+";
+    std::cout << "+";
+    for (int i = 0; i < width - 2; i++) std::cout << "-";
+    std::cout << "+";
 
     // Middle: |     |
     for (int row = 1; row < height - 1; row++) {
         MoveToXY(x, y + row);
-        cout << "|";
-        for (int i = 0; i < width - 2; i++) cout << " ";
-        cout << "|";
+        std::cout << "|";
+        for (int i = 0; i < width - 2; i++) std::cout << " ";
+        std::cout << "|";
     }
 
     // Bottom border
     MoveToXY(x, y + height - 1);
-    cout << "+";
-    for (int i = 0; i < width - 2; i++) cout << "-";
-    cout << "+";
+    std::cout << "+";
+    for (int i = 0; i < width - 2; i++) std::cout << "-";
+    std::cout << "+";
 }
 
-void ConsoleView::PrintHeader(string title) {
+void ConsoleView::PrintHeader(std::string title) {
     ClearScreen();
 
     // Top line
@@ -66,14 +63,14 @@ void ConsoleView::PrintHeader(string title) {
     int startX = (80 - (int)(title.length())) / 2;
     if (startX < 0) startX = 0;
     MoveToXY(startX, 1);
-    cout << title;
+    std::cout << title;
 
     // Separator line
     PrintLine(0, 3, 80, '-');
     ResetColor();
 }
 
-void ConsoleView::PrintFooter(string message) {
+void ConsoleView::PrintFooter(std::string message) {
     // Separator
     MoveToXY(0, 23);
     PrintLine(0, 23, 80, '-');
@@ -81,14 +78,14 @@ void ConsoleView::PrintFooter(string message) {
     // Footer text
     MoveToXY(1, 24);
     SetColor(COLOR_INFO);
-    cout << message;
+    std::cout << message;
     ResetColor();
 
     // Move cursor out of footer
     MoveToXY(0, 25);
 }
 
-void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
+void ConsoleView::PrintShortcutFooter(std::string shortcuts, std::string status) {
     // Separator
     MoveToXY(0, 23);
     PrintLine(0, 23, 80, '-');
@@ -96,7 +93,7 @@ void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
     // Left part: shortcuts
     MoveToXY(1, 24);
     SetColor(COLOR_WARNING);
-    cout << shortcuts;
+    std::cout << shortcuts;
 
     // Right part: status (right-aligned)
     int statusX = 80 - (int)(status.length()) - 1;
@@ -105,7 +102,7 @@ void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
     }
     MoveToXY(statusX, 24);
     SetColor(COLOR_INFO);
-    cout << status;
+    std::cout << status;
 
     ResetColor();
     MoveToXY(0, 25);
@@ -113,66 +110,66 @@ void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
 
 //MESSAGE IMPLEMENTATIONS
 
-void ConsoleView::ShowSuccess(string message) {
+void ConsoleView::ShowSuccess(std::string message) {
     SetColor(COLOR_SUCCESS);
-    cout << "[OK] " << message << endl;
+    std::cout << "[OK] " << message << std::endl;
     ResetColor();
 }
 
-void ConsoleView::ShowError(string message) {
+void ConsoleView::ShowError(std::string message) {
     SetColor(COLOR_ERROR);
-    cout << "[ERR] " << message << endl;
+    std::cout << "[ERR] " << message << std::endl;
     ResetColor();
 }
 
-void ConsoleView::ShowWarning(string message) {
+void ConsoleView::ShowWarning(std::string message) {
     SetColor(COLOR_WARNING);
-    cout << "[WARN] " << message << endl;
+    std::cout << "[WARN] " << message << std::endl;
     ResetColor();
 }
 
-void ConsoleView::ShowInfo(string message) {
+void ConsoleView::ShowInfo(std::string message) {
     SetColor(COLOR_INFO);
-    cout << "[INFO] " << message << endl;
+    std::cout << "[INFO] " << message << std::endl;
     ResetColor();
 }
 
 //TABLE IMPLEMENTATIONS
 
-void ConsoleView::PrintTableHeader(string columns[], int colWidths[], int numCols) {
-    cout << "+";
+void ConsoleView::PrintTableHeader(std::string columns[], int colWidths[], int numCols) {
+    std::cout << "+";
     for (int i = 0; i < numCols; i++) {
-        for (int j = 0; j < colWidths[i]; j++) cout << "-";
-        cout << "+";
+        for (int j = 0; j < colWidths[i]; j++) std::cout << "-";
+        std::cout << "+";
     }
-    cout << endl;
+    std::cout << std::endl;
 
-    cout << "|";
+    std::cout << "|";
     for (int i = 0; i < numCols; i++) {
-        cout << " " << left << setw(colWidths[i] - 1) << columns[i] << "|";
+        std::cout << " " << std::left << std::setw(colWidths[i] - 1) << columns[i] << "|";
     }
-    cout << endl;
+    std::cout << std::endl;
 
     PrintTableSeparator();
 }
 
-void ConsoleView::PrintTableRow(const string col1, const string col2, const string col3) {
+void ConsoleView::PrintTableRow(const std::string col1, const std::string col2, const std::string col3) {
     // colWidths[] = {25, 25, 15}
-    cout << "|" << left  << setw(25) << col1;  // Column 1: exactly 25
-    cout << "|" << right << setw(25) << col2;  // Column 2: exactly 25
-    cout << "|" << right << setw(15) << col3 << "|" << endl;  // Column 3: exactly 15
+    std::cout << "|" << std::left  << std::setw(25) << col1;  // Column 1: exactly 25
+    std::cout << "|" << std::right << std::setw(25) << col2;  // Column 2: exactly 25
+    std::cout << "|" << std::right << std::setw(15) << col3 << "|" << std::endl;  // Column 3: exactly 15
 }
 
 void ConsoleView::PrintTableSeparator() {
     // 25 + 25 + 15 + 4 ('+' at 4 places) = 79
-    cout << "+-------------------------+-------------------------+---------------+" << endl;
+    std::cout << "+-------------------------+-------------------------+---------------+" << std::endl;
 }
 
-string ConsoleView::FormatCurrency(long amount) {
-    stringstream ss;
-    ss << fixed << setprecision(0);
-    string numStr = to_string(amount);
-    string result;
+std::string ConsoleView::FormatCurrency(long amount) {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(0);
+    std::string numStr = std::to_string(amount);
+    std::string result;
     int count = 0;
 
     for (int i = (int)(numStr.length()) - 1; i >= 0; --i) {

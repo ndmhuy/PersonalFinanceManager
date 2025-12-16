@@ -1,14 +1,13 @@
-#ifndef CONSOLEVIEW_H
-#define CONSOLEVIEW_H
+#ifndef ConsoleView_h
+#define ConsoleView_h
 
 #include <iostream>
-#include <windows.h>
 #include <string>
-using namespace std;
+#include <iomanip>
 
 class ConsoleView {
 private:
-    // Color constants for consistent UI theming
+    // Color constants for consistent UI theming - Windows Console
     static const int COLOR_SUCCESS = 10;      /// Light Green for success messages
     static const int COLOR_ERROR = 12;        /// Light Red for error messages
     static const int COLOR_WARNING = 14;      /// Light Yellow for warnings
@@ -52,34 +51,34 @@ public:
 
     /// @brief Prints centered header with colored background at top of screen
     /// @param title Text content to display as header (max 40 chars recommended)
-    void PrintHeader(string title);
+    void PrintHeader(std::string title);
 
     /// @brief Prints footer message at bottom of screen (row 24)
     /// @param message Instructional text or status (max 70 chars recommended)
-    void PrintFooter(string message);
+    void PrintFooter(std::string message);
 
     /// @brief Prints shortcut footer with keyboard hints and status info
     /// @param shortcuts Keyboard shortcut instructions (e.g. "[1-5] Select | ESC Exit")
     /// @param status Current application status (e.g. "File saved ✓ | 25 transactions")
-    void PrintShortcutFooter(string shortcuts, string status);
+    void PrintShortcutFooter(std::string shortcuts, std::string status);
 
     // ===== MESSAGE DISPLAY FUNCTIONS =====
 
     /// @brief Displays success message with green color and checkmark icon
     /// @param message Success notification text (e.g. "Income added successfully!")
-    void ShowSuccess(string message);
+    void ShowSuccess(std::string message);
 
     /// @brief Displays error message with red color and error icon
     /// @param message Error description (e.g. "Invalid amount! Must be > 0")
-    void ShowError(string message);
+    void ShowError(std::string message);
 
     /// @brief Displays warning message with yellow color and warning icon
     /// @param message Warning text (e.g. "Deleting wallet with transactions!")
-    void ShowWarning(string message);
+    void ShowWarning(std::string message);
 
     /// @brief Displays info message with cyan color and info icon
     /// @param message Informational text (e.g. "Loading data from file...")
-    void ShowInfo(string message);
+    void ShowInfo(std::string message);
 
     // ===== TABLE PRINTING FUNCTIONS =====
 
@@ -87,13 +86,13 @@ public:
     /// @param columns Array of column header texts (max 3 columns supported)
     /// @param colWidths Array of column widths in characters
     /// @param numCols Number of columns (1-3)
-    void PrintTableHeader(string columns[], int colWidths[], int numCols);
+    void PrintTableHeader(std::string columns[], int colWidths[], int numCols);
 
     /// @brief Prints single data row in table format
     /// @param col1 First column data (left-aligned, padded to column width)
     /// @param col2 Second column data (right-aligned if numeric)
     /// @param col3 Third column data (currency format if applicable)
-    void PrintTableRow(const string col1,const  string col2,const  string col3);
+    void PrintTableRow(const std::string col1, const std::string col2, const std::string col3);
 
     /// @brief Prints horizontal separator line between table rows
     void PrintTableSeparator();
@@ -101,7 +100,7 @@ public:
     /// @brief Prints currency value with thousand separators and VND suffix
     /// @param amount Numeric value to format (long integer)
     /// @return Formatted string (e.g. "50,000,000 VND")
-    string FormatCurrency(long amount);
+    std::string FormatCurrency(long amount);
 };
 
-#endif
+#endif // !ConsoleView_h

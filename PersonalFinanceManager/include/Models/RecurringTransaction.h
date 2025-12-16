@@ -111,7 +111,6 @@ public:
     // ==========================================
     std::string ToString() const;
 
-    // TODO [M1]: Add toBinary(ofstream&) and fromBinary(ifstream&) here
     // ==========================================
     // 6. SERIALIZATION
     // ==========================================

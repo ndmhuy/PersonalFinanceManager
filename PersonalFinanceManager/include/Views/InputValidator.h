@@ -1,8 +1,8 @@
-#ifndef INPUTVALIDATOR_H
-#define INPUTVALIDATOR_H
+#ifndef InputValidator_h
+#define InputValidator_h
 
 #include <string>
-#include "../Utils/Date.h"
+#include "Utils/Date.h"
 
 class InputValidator {
 public:
@@ -38,4 +38,4 @@ private:
     static bool ValidateString(const std::string& str);
 };
 
-#endif // INPUTVALIDATOR_H
+#endif // !InputValidator_h

@@ -1,6 +1,7 @@
-#include "../../include/Views/DashBoard.h"
-#include "../../include/Views/Menus.h"
-#include <conio.h> // for _getch()
+#include "Views/DashBoard.h"
+#include "Views/Menus.h"
+#include "Utils/PlatformUtils.h"
+#include "Models/Wallet.h"
 
 void Dashboard::Display() {
     view.ClearScreen();
@@ -12,7 +13,7 @@ void Dashboard::Display() {
     if (totalBalance < 0) view.SetColor(12); // Red color for negative balance
     else view.SetColor(10); // Green color for positive balance
 
-    std::cout << "Total Balance: " << view.FormatCurrency(totalBalance) << endl;
+    std::cout << "Total Balance: " << view.FormatCurrency(totalBalance) << std::endl;
     view.ResetColor();
 
     // Display wallet list (mock data for demonstration)
@@ -28,17 +29,17 @@ void Dashboard::Display() {
     view.PrintShortcutFooter("[M] Main Menu  [ESC] Exit", "Dashboard READY");
 
     // Wait for user input to navigate
-    char choice = _getch();
+    char choice = GetKeyPress();
     if (choice == 'm' || choice == 'M') {
         ShowMainMenu();
     }
 }
 
 void Dashboard::ShowMainMenu() {
-    cout << "\n" << Menus::MAIN_MENU_TITLE << "\n";
-    cout << Menus::MAIN_MENU_1 << "\n";
-    cout << Menus::MAIN_MENU_2 << "\n";
-    cout << Menus::MAIN_MENU_3 << "\n";
-    cout << Menus::MAIN_MENU_4 << "\n";
-    cout << Menus::MAIN_MENU_5 << "\n";
+    std::cout << "\n" << Menus::MAIN_MENU_TITLE << "\n";
+    std::cout << Menus::MAIN_MENU_1 << "\n";
+    std::cout << Menus::MAIN_MENU_2 << "\n";
+    std::cout << Menus::MAIN_MENU_3 << "\n";
+    std::cout << Menus::MAIN_MENU_4 << "\n";
+    std::cout << Menus::MAIN_MENU_5 << "\n";
 }

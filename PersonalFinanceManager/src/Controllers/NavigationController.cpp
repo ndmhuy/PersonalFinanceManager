@@ -1,5 +1,7 @@
-#include "../../include/Controllers/NavigationController.h"
-#include <conio.h>
+#include "Controllers/NavigationController.h"
+#include "Controllers/AppController.h"
+#include "Utils/PlatformUtils.h"
+
 #include <iostream>
 
 NavigationController::NavigationController(AppController* app) : appController(app), running(false) {}
@@ -8,7 +10,7 @@ NavigationController::~NavigationController() {}
 
 void NavigationController::Init() {
     if (appController) {
-        appController->loadData();
+        appController->LoadData();
         view.ShowInfo("Data loaded.");
     }
 }
@@ -36,7 +38,7 @@ void NavigationController::Run() {
 
 void NavigationController::Shutdown() {
     if (appController) {
-        appController->saveData();
+        appController->SaveData();
         view.ShowInfo("Data saved. Exiting...");
     }
 }
@@ -106,7 +108,7 @@ void NavigationController::HandleAddIncome() {
     view.PrintHeader("ADD INCOME");
 
     // Step 1: Select Wallet
-    ArrayList<Wallet*>* wallets = appController->getWalletsList();
+    ArrayList<Wallet*>* wallets = appController->GetWalletsList();
     if (!wallets || wallets->Count() == 0) {
         view.ShowError("No wallets available. Please create a wallet first.");
         PauseWithMessage("Press any key to continue...");
@@ -122,8 +124,8 @@ void NavigationController::HandleAddIncome() {
 
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), w->getName(), 
-                          view.FormatCurrency(static_cast<long>(w->getBalance())));
+        view.PrintTableRow(std::to_string(i + 1), w->GetName(),
+                          view.FormatCurrency(static_cast<long>(w->GetBalance())));
     }
     view.PrintTableSeparator();
 
@@ -140,7 +142,7 @@ void NavigationController::HandleAddIncome() {
     }
 
     Wallet* selectedWallet = wallets->Get(walletIdx - 1);
-    std::string walletId = selectedWallet->getId();
+    std::string walletId = selectedWallet->GetId();
 
     // Step 2: Get Amount
     view.ClearScreen();
@@ -158,7 +160,7 @@ void NavigationController::HandleAddIncome() {
     std::string description = InputValidator::GetValidString("Enter description: ");
 
     // Step 5: Select Income Source
-    ArrayList<IncomeSource*>* sources = appController->getIncomeSourcesList();
+    ArrayList<IncomeSource*>* sources = appController->GetIncomeSourcesList();
     if (!sources || sources->Count() == 0) {
         view.ShowError("No income sources available. Please create an income source first.");
         PauseWithMessage("Press any key to continue...");
@@ -176,7 +178,7 @@ void NavigationController::HandleAddIncome() {
 
     for (size_t i = 0; i < sources->Count(); ++i) {
         IncomeSource* src = sources->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), src->getName(), "");
+        view.PrintTableRow(std::to_string(i + 1), src->GetName(), "");
     }
     view.PrintTableSeparator();
 
@@ -193,11 +195,11 @@ void NavigationController::HandleAddIncome() {
     }
 
     IncomeSource* selectedSource = sources->Get(srcIdx - 1);
-    std::string sourceId = selectedSource->getId();
+    std::string sourceId = selectedSource->GetId();
 
     // Step 6: Add transaction to AppController
     try {
-        appController->addTransaction(amount, walletId, sourceId, 
+        appController->AddTransaction(amount, walletId, sourceId,
                                      TransactionType::Income, date, description);
         
         view.ClearScreen();
@@ -208,11 +210,11 @@ void NavigationController::HandleAddIncome() {
         view.ResetColor();
         
         view.MoveToXY(5, 7);
-        std::cout << "Wallet: " << selectedWallet->getName() << std::endl;
+        std::cout << "Wallet: " << selectedWallet->GetName() << std::endl;
         view.MoveToXY(5, 8);
         std::cout << "Amount: " << view.FormatCurrency(static_cast<long>(amount)) << std::endl;
         view.MoveToXY(5, 9);
-        std::cout << "Source: " << selectedSource->getName() << std::endl;
+        std::cout << "Source: " << selectedSource->GetName() << std::endl;
         view.MoveToXY(5, 10);
         std::cout << "Date: " << date.ToString() << std::endl;
         view.MoveToXY(5, 11);
@@ -288,7 +290,7 @@ void NavigationController::HandleAddExpense() {
     view.PrintHeader("ADD EXPENSE");
 
     // Step 1: Select Wallet
-    ArrayList<Wallet*>* wallets = appController->getWalletsList();
+    ArrayList<Wallet*>* wallets = appController->GetWalletsList();
     if (!wallets || wallets->Count() == 0) {
         view.ShowError("No wallets available. Please create a wallet first.");
         PauseWithMessage("Press any key to continue...");
@@ -304,8 +306,8 @@ void NavigationController::HandleAddExpense() {
 
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), w->getName(), 
-                          view.FormatCurrency(static_cast<long>(w->getBalance())));
+        view.PrintTableRow(std::to_string(i + 1), w->GetName(),
+                          view.FormatCurrency(static_cast<long>(w->GetBalance())));
     }
     view.PrintTableSeparator();
 
@@ -322,7 +324,7 @@ void NavigationController::HandleAddExpense() {
     }
 
     Wallet* selectedWallet = wallets->Get(walletIdx - 1);
-    std::string walletId = selectedWallet->getId();
+    std::string walletId = selectedWallet->GetId();
 
     // Step 2: Get Amount
     view.ClearScreen();
@@ -340,7 +342,7 @@ void NavigationController::HandleAddExpense() {
     std::string description = InputValidator::GetValidString("Enter description: ");
 
     // Step 5: Select Category
-    ArrayList<Category*>* categories = appController->getCategoriesList();
+    ArrayList<Category*>* categories = appController->GetCategoriesList();
     if (!categories || categories->Count() == 0) {
         view.ShowError("No categories available. Please create a category first.");
         PauseWithMessage("Press any key to continue...");
@@ -358,7 +360,7 @@ void NavigationController::HandleAddExpense() {
 
     for (size_t i = 0; i < categories->Count(); ++i) {
         Category* cat = categories->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), cat->getName(), "");
+        view.PrintTableRow(std::to_string(i + 1), cat->GetName(), "");
     }
     view.PrintTableSeparator();
 
@@ -375,11 +377,11 @@ void NavigationController::HandleAddExpense() {
     }
 
     Category* selectedCategory = categories->Get(catIdx - 1);
-    std::string categoryId = selectedCategory->getId();
+    std::string categoryId = selectedCategory->GetId();
 
     // Step 6: Add transaction to AppController
     try {
-        appController->addTransaction(amount, walletId, categoryId, 
+        appController->AddTransaction(amount, walletId, categoryId,
                                      TransactionType::Expense, date, description);
         
         view.ClearScreen();
@@ -390,11 +392,11 @@ void NavigationController::HandleAddExpense() {
         view.ResetColor();
         
         view.MoveToXY(5, 7);
-        std::cout << "Wallet: " << selectedWallet->getName() << std::endl;
+        std::cout << "Wallet: " << selectedWallet->GetName() << std::endl;
         view.MoveToXY(5, 8);
         std::cout << "Amount: " << view.FormatCurrency(static_cast<long>(amount)) << std::endl;
         view.MoveToXY(5, 9);
-        std::cout << "Category: " << selectedCategory->getName() << std::endl;
+        std::cout << "Category: " << selectedCategory->GetName() << std::endl;
         view.MoveToXY(5, 10);
         std::cout << "Date: " << date.ToString() << std::endl;
         view.MoveToXY(5, 11);
@@ -492,7 +494,7 @@ void NavigationController::HandleCreateWallet() {
     double initial = InputValidator::GetValidMoney("Enter initial balance: ");
 
     try {
-        appController->addWallet(name, initial);
+        appController->AddWallet(name, initial);
         view.ShowSuccess("Wallet created successfully.");
     } catch (const std::exception& e) {
         view.ShowError(std::string("Error creating wallet: ") + e.what());
@@ -503,7 +505,7 @@ void NavigationController::HandleCreateWallet() {
 void NavigationController::HandleViewWallets() {
     view.ClearScreen();
     view.PrintHeader("WALLETS");
-    ArrayList<Wallet*>* wallets = appController->getWalletsList();
+    ArrayList<Wallet*>* wallets = appController->GetWalletsList();
     if (!wallets || wallets->Count() == 0) {
         view.ShowInfo("No wallets available.");
         PauseWithMessage("Press any key to continue...");
@@ -515,7 +517,7 @@ void NavigationController::HandleViewWallets() {
     view.PrintTableHeader(headers, widths, 3);
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), w->getName(), view.FormatCurrency(static_cast<long>(w->getBalance())));
+        view.PrintTableRow(std::to_string(i + 1), w->GetName(), view.FormatCurrency(static_cast<long>(w->GetBalance())));
     }
     view.PrintTableSeparator();
     PauseWithMessage("Press any key to continue...");
@@ -531,9 +533,9 @@ void NavigationController::HandleDeleteWallet() {
 void NavigationController::HandleMonthlySummary() {
     view.ClearScreen();
     view.PrintHeader("MONTHLY SUMMARY");
-    ArrayList<Transaction*>* txs = appController->getTransactions();
+    ArrayList<Transaction*>* txs = appController->GetTransactions();
     long count = txs ? txs->Count() : 0;
-    double totalBalance = appController->getTotalBalance();
+    double totalBalance = appController->GetTotalBalance();
     view.MoveToXY(5,5);
     std::cout << "Total transactions: " << count << std::endl;
     std::cout << "Total balance across wallets: " << view.FormatCurrency(static_cast<long>(totalBalance)) << std::endl;
@@ -551,13 +553,13 @@ void NavigationController::HandleSpendingByCategory() {
 void NavigationController::HandleIncomeVsExpense() {
     view.ClearScreen();
     view.PrintHeader("INCOME VS EXPENSE");
-    ArrayList<Transaction*>* txs = appController->getTransactions();
+    ArrayList<Transaction*>* txs = appController->GetTransactions();
     double income = 0.0, expense = 0.0;
     if (txs) {
         for (size_t i = 0; i < txs->Count(); ++i) {
             Transaction* t = txs->Get(i);
-            if (t->getType() == TransactionType::Income) income += t->getAmount();
-            else expense += t->getAmount();
+            if (t->GetType() == TransactionType::Income) income += t->GetAmount();
+            else expense += t->GetAmount();
         }
     }
     view.MoveToXY(5,5);
@@ -569,7 +571,7 @@ void NavigationController::HandleIncomeVsExpense() {
 void NavigationController::HandleWalletBalanceOverview() {
     view.ClearScreen();
     view.PrintHeader("WALLET BALANCE OVERVIEW");
-    ArrayList<Wallet*>* wallets = appController->getWalletsList();
+    ArrayList<Wallet*>* wallets = appController->GetWalletsList();
     if (!wallets || wallets->Count() == 0) {
         view.ShowInfo("No wallets available.");
         PauseWithMessage("Press any key to continue...");
@@ -578,12 +580,12 @@ void NavigationController::HandleWalletBalanceOverview() {
     std::string headers[] = {"Wallet", "Balance", "% of Total"};
     int widths[] = {30, 20, 15};
     view.PrintTableHeader(headers, widths, 3);
-    double total = appController->getTotalBalance();
+    double total = appController->GetTotalBalance();
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        double bal = w->getBalance();
+        double bal = w->GetBalance();
         std::string pct = total != 0 ? std::to_string(static_cast<int>((bal / total) * 100)) + "%" : "0%";
-        view.PrintTableRow(w->getName(), view.FormatCurrency(static_cast<long>(bal)), pct);
+        view.PrintTableRow(w->GetName(), view.FormatCurrency(static_cast<long>(bal)), pct);
     }
     view.PrintTableSeparator();
     PauseWithMessage("Press any key to continue...");
@@ -591,5 +593,5 @@ void NavigationController::HandleWalletBalanceOverview() {
 
 void NavigationController::PauseWithMessage(const std::string& msg) {
     view.PrintFooter(msg);
-    _getch();
+    GetKeyPress();
 }

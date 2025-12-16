@@ -1,7 +1,11 @@
-#ifndef DASHBOARD_H
-#define DASHBOARD_H
+#ifndef Dashboard_h
+#define Dashboard_h
 
-#include "../Views/ConsoleView.h"
+#include "Views/ConsoleView.h"
+#include "Utils/ArrayList.h"
+
+// FORWARD DECLARATION
+class Wallet;
 
 class Dashboard {
 private:
@@ -15,4 +19,4 @@ public:
     void ShowMainMenu();
 };
 
-#endif 
+#endif // !Dashboard_h
