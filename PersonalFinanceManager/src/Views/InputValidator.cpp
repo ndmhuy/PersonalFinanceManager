@@ -3,27 +3,29 @@
 #include <iostream>
 #include <cctype>
 
-double InputValidator::GetValidMoney(const std::string& prompt) {
+using namespace std;
+
+double InputValidator::GetValidMoney(const string& prompt) {
     double amount;
     while (true) {
-        std::cout << prompt;
-        if (std::cin >> amount && ValidateMoney(amount)) {
-            std::cin.ignore(); // Clear input buffer
+        cout << prompt;
+        if (cin >> amount && ValidateMoney(amount)) {
+            cin.ignore(); // Clear input buffer
             return amount;
         }
         // Invalid input
-        std::cin.clear();
-        std::cin.ignore(10000, '\n');
+        cin.clear();
+        cin.ignore(10000, '\n');
         ConsoleView view;
         view.ShowError("Invalid input! Please enter an amount greater than 0.");
     }
 }
 
-Date InputValidator::GetValidDate(const std::string& prompt) {
-    std::string dateStr;
+Date InputValidator::GetValidDate(const string& prompt) {
+    string dateStr;
     while (true) {
-        std::cout << prompt;
-        getline(std::cin, dateStr);
+        cout << prompt;
+        getline(cin, dateStr);
         
         try {
             Date date = Date::FromString(dateStr);
@@ -39,11 +41,11 @@ Date InputValidator::GetValidDate(const std::string& prompt) {
     }
 }
 
-std::string InputValidator::GetValidString(const std::string& prompt) {
-    std::string input;
+string InputValidator::GetValidString(const string& prompt) {
+    string input;
     while (true) {
-        std::cout << prompt;
-        getline(std::cin, input);
+        cout << prompt;
+        getline(cin, input);
         
         if (ValidateString(input)) {
             return input;
@@ -63,7 +65,7 @@ bool InputValidator::ValidateDate(const Date& date) {
     return !(date.GetDay() == 0 && date.GetMonth() == 0 && date.GetYear() == 0);
 }
 
-bool InputValidator::ValidateString(const std::string& str) {
+bool InputValidator::ValidateString(const string& str) {
     // Remove leading/trailing whitespace check
     if (str.empty()) return false;
     

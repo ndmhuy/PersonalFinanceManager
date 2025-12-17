@@ -2,6 +2,8 @@
 #include "Utils/PlatformUtils.h"
 #include <sstream>
 
+using namespace std;
+
 //CONSOLE CONTROL IMPLEMENTATIONS
 
 void ConsoleView::MoveToXY(int x, int y) {
@@ -25,34 +27,34 @@ void ConsoleView::ResetColor() {
 void ConsoleView::PrintLine(int x, int y, int length, char ch) {
     MoveToXY(x, y);
     for (int i = 0; i < length; i++) {
-        std::cout << ch;
+        cout << ch;
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 void ConsoleView::PrintBox(int x, int y, int width, int height) {
     // Top border: +-----+
     MoveToXY(x, y);
-    std::cout << "+";
-    for (int i = 0; i < width - 2; i++) std::cout << "-";
-    std::cout << "+";
+    cout << "+";
+    for (int i = 0; i < width - 2; i++) cout << "-";
+    cout << "+";
 
     // Middle: |     |
     for (int row = 1; row < height - 1; row++) {
         MoveToXY(x, y + row);
-        std::cout << "|";
-        for (int i = 0; i < width - 2; i++) std::cout << " ";
-        std::cout << "|";
+        cout << "|";
+        for (int i = 0; i < width - 2; i++) cout << " ";
+        cout << "|";
     }
 
     // Bottom border
     MoveToXY(x, y + height - 1);
-    std::cout << "+";
-    for (int i = 0; i < width - 2; i++) std::cout << "-";
-    std::cout << "+";
+    cout << "+";
+    for (int i = 0; i < width - 2; i++) cout << "-";
+    cout << "+";
 }
 
-void ConsoleView::PrintHeader(std::string title) {
+void ConsoleView::PrintHeader(string title) {
     ClearScreen();
 
     // Top line
@@ -63,14 +65,14 @@ void ConsoleView::PrintHeader(std::string title) {
     int startX = (80 - (int)(title.length())) / 2;
     if (startX < 0) startX = 0;
     MoveToXY(startX, 1);
-    std::cout << title;
+    cout << title;
 
     // Separator line
     PrintLine(0, 3, 80, '-');
     ResetColor();
 }
 
-void ConsoleView::PrintFooter(std::string message) {
+void ConsoleView::PrintFooter(string message) {
     // Separator
     MoveToXY(0, 23);
     PrintLine(0, 23, 80, '-');
@@ -78,14 +80,14 @@ void ConsoleView::PrintFooter(std::string message) {
     // Footer text
     MoveToXY(1, 24);
     SetColor(COLOR_INFO);
-    std::cout << message;
+    cout << message;
     ResetColor();
 
     // Move cursor out of footer
     MoveToXY(0, 25);
 }
 
-void ConsoleView::PrintShortcutFooter(std::string shortcuts, std::string status) {
+void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
     // Separator
     MoveToXY(0, 23);
     PrintLine(0, 23, 80, '-');
@@ -93,7 +95,7 @@ void ConsoleView::PrintShortcutFooter(std::string shortcuts, std::string status)
     // Left part: shortcuts
     MoveToXY(1, 24);
     SetColor(COLOR_WARNING);
-    std::cout << shortcuts;
+    cout << shortcuts;
 
     // Right part: status (right-aligned)
     int statusX = 80 - (int)(status.length()) - 1;
@@ -102,7 +104,7 @@ void ConsoleView::PrintShortcutFooter(std::string shortcuts, std::string status)
     }
     MoveToXY(statusX, 24);
     SetColor(COLOR_INFO);
-    std::cout << status;
+    cout << status;
 
     ResetColor();
     MoveToXY(0, 25);
@@ -110,72 +112,72 @@ void ConsoleView::PrintShortcutFooter(std::string shortcuts, std::string status)
 
 //MESSAGE IMPLEMENTATIONS
 
-void ConsoleView::ShowSuccess(std::string message) {
+void ConsoleView::ShowSuccess(string message) {
     SetColor(COLOR_SUCCESS);
-    std::cout << "[OK] " << message << std::endl;
+    cout << "[OK] " << message << endl;
     ResetColor();
 }
 
-void ConsoleView::ShowError(std::string message) {
+void ConsoleView::ShowError(string message) {
     SetColor(COLOR_ERROR);
-    std::cout << "[ERR] " << message << std::endl;
+    cout << "[ERR] " << message << endl;
     ResetColor();
 }
 
-void ConsoleView::ShowWarning(std::string message) {
+void ConsoleView::ShowWarning(string message) {
     SetColor(COLOR_WARNING);
-    std::cout << "[WARN] " << message << std::endl;
+    cout << "[WARN] " << message << endl;
     ResetColor();
 }
 
-void ConsoleView::ShowInfo(std::string message) {
+void ConsoleView::ShowInfo(string message) {
     SetColor(COLOR_INFO);
-    std::cout << "[INFO] " << message << std::endl;
+    cout << "[INFO] " << message << endl;
     ResetColor();
 }
 
 //TABLE IMPLEMENTATIONS
 
-void ConsoleView::PrintTableHeader(std::string columns[], int colWidths[], int numCols) {
-    std::cout << "+";
+void ConsoleView::PrintTableHeader(string columns[], int colWidths[], int numCols) {
+    cout << "+";
     for (int i = 0; i < numCols; i++) {
-        for (int j = 0; j < colWidths[i]; j++) std::cout << "-";
-        std::cout << "+";
+        for (int j = 0; j < colWidths[i]; j++) cout << "-";
+        cout << "+";
     }
-    std::cout << std::endl;
+    cout << endl;
 
-    std::cout << "|";
+    cout << "|";
     for (int i = 0; i < numCols; i++) {
-        std::cout << " " << std::left << std::setw(colWidths[i] - 1) << columns[i] << "|";
+        cout << " " << left << setw(colWidths[i] - 1) << columns[i] << "|";
     }
-    std::cout << std::endl;
+    cout << endl;
 
     PrintTableSeparator(colWidths,numCols);
 }
 
-void ConsoleView::PrintTableRow(const std::string data[], const int colWidths[], int numCols) {
-    std::cout << "|";
+void ConsoleView::PrintTableRow(const string data[], const int colWidths[], int numCols) {
+    cout << "|";
     for (int i = 0; i < numCols; i++) {
         // Left-align all columns and pad to the specified width
-        std::cout << std::left << std::setw(colWidths[i]) << data[i] << "|";
+        cout << left << setw(colWidths[i]) << data[i] << "|";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 void ConsoleView::PrintTableSeparator(const int colWidths[], int numCols) {
-    std::cout << "+";
+    cout << "+";
     for (int i = 0; i < numCols; i++) {
-        for (int j = 0; j < colWidths[i]; j++) std::cout << "-";
-        std::cout << "+";
+        for (int j = 0; j < colWidths[i]; j++) cout << "-";
+        cout << "+";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
-std::string ConsoleView::FormatCurrency(long amount) {
-    std::stringstream ss;
-    ss << std::fixed << std::setprecision(0);
-    std::string numStr = std::to_string(amount);
-    std::string result;
+string ConsoleView::FormatCurrency(long amount) {
+    stringstream ss;
+    ss << fixed << setprecision(0);
+    string numStr = to_string(amount);
+    string result;
     int count = 0;
 
     for (int i = (int)(numStr.length()) - 1; i >= 0; --i) {
