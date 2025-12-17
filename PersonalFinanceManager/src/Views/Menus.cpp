@@ -9,16 +9,17 @@ Menus::Menus() {}
 char Menus::DisplayMainMenu() {
     view.ClearScreen();
     view.PrintHeader(MAIN_MENU_TITLE);
+    view.PrintBox(8,5,31,7);
 
-    view.MoveToXY(10, 5);
-    std::cout << MAIN_MENU_1 << std::endl;
     view.MoveToXY(10, 6);
-    std::cout << MAIN_MENU_2 << std::endl;
+    std::cout << MAIN_MENU_1 << std::endl;
     view.MoveToXY(10, 7);
-    std::cout << MAIN_MENU_3 << std::endl;
+    std::cout << MAIN_MENU_2 << std::endl;
     view.MoveToXY(10, 8);
-    std::cout << MAIN_MENU_4 << std::endl;
+    std::cout << MAIN_MENU_3 << std::endl;
     view.MoveToXY(10, 9);
+    std::cout << MAIN_MENU_4 << std::endl;
+    view.MoveToXY(10, 10);
     std::cout << MAIN_MENU_5 << std::endl;
 
     view.PrintShortcutFooter("[1-5] Select | [ESC] Exit", "Main Menu");
@@ -31,14 +32,15 @@ char Menus::DisplayMainMenu() {
 char Menus::DisplayExpenseMenu() {
     view.ClearScreen();
     view.PrintHeader(EXPENSE_MENU_TITLE);
+    view.PrintBox(8,5,30,6);
 
-    view.MoveToXY(10, 5);
-    std::cout << EXPENSE_MENU_1 << std::endl;
     view.MoveToXY(10, 6);
-    std::cout << EXPENSE_MENU_2 << std::endl;
+    std::cout << EXPENSE_MENU_1 << std::endl;
     view.MoveToXY(10, 7);
-    std::cout << EXPENSE_MENU_3 << std::endl;
+    std::cout << EXPENSE_MENU_2 << std::endl;
     view.MoveToXY(10, 8);
+    std::cout << EXPENSE_MENU_3 << std::endl;
+    view.MoveToXY(10, 9);
     std::cout << EXPENSE_MENU_4 << std::endl;
 
     view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Expense Menu");
@@ -50,14 +52,15 @@ char Menus::DisplayExpenseMenu() {
 char Menus::DisplayIncomeMenu() {
     view.ClearScreen();
     view.PrintHeader(INCOME_MENU_TITLE);
+    view.PrintBox(8,5,30,6);
 
-    view.MoveToXY(10, 5);
-    std::cout << INCOME_MENU_1 << std::endl;
     view.MoveToXY(10, 6);
-    std::cout << INCOME_MENU_2 << std::endl;
+    std::cout << INCOME_MENU_1 << std::endl;
     view.MoveToXY(10, 7);
-    std::cout << INCOME_MENU_3 << std::endl;
+    std::cout << INCOME_MENU_2 << std::endl;
     view.MoveToXY(10, 8);
+    std::cout << INCOME_MENU_3 << std::endl;
+    view.MoveToXY(10, 9);
     std::cout << INCOME_MENU_4 << std::endl;
 
     view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Income Menu");
@@ -69,12 +72,13 @@ char Menus::DisplayIncomeMenu() {
 char Menus::DisplayWalletMenu() {
     view.ClearScreen();
     view.PrintHeader(WALLET_MENU_TITLE);
+    view.PrintBox(8,5,30,5);
 
-    view.MoveToXY(10, 5);
-    std::cout << WALLET_MENU_1 << std::endl;
     view.MoveToXY(10, 6);
-    std::cout << WALLET_MENU_2 << std::endl;
+    std::cout << WALLET_MENU_1 << std::endl;
     view.MoveToXY(10, 7);
+    std::cout << WALLET_MENU_2 << std::endl;
+    view.MoveToXY(10, 8);
     std::cout << WALLET_MENU_3 << std::endl;
 
     view.PrintShortcutFooter("[1-3] Select | [ESC] Back", "Wallet Menu");
@@ -86,14 +90,15 @@ char Menus::DisplayWalletMenu() {
 char Menus::DisplayReportsMenu() {
     view.ClearScreen();
     view.PrintHeader(REPORTS_MENU_TITLE);
+    view.PrintBox(8,5,30,6);
 
-    view.MoveToXY(10, 5);
-    std::cout << REPORTS_MENU_1 << std::endl;
     view.MoveToXY(10, 6);
-    std::cout << REPORTS_MENU_2 << std::endl;
+    std::cout << REPORTS_MENU_1 << std::endl;
     view.MoveToXY(10, 7);
-    std::cout << REPORTS_MENU_3 << std::endl;
+    std::cout << REPORTS_MENU_2 << std::endl;
     view.MoveToXY(10, 8);
+    std::cout << REPORTS_MENU_3 << std::endl;
+    view.MoveToXY(10, 9);
     std::cout << REPORTS_MENU_4 << std::endl;
 
     view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Reports Menu");

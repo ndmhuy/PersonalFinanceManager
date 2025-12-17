@@ -150,19 +150,25 @@ void ConsoleView::PrintTableHeader(std::string columns[], int colWidths[], int n
     }
     std::cout << std::endl;
 
-    PrintTableSeparator();
+    PrintTableSeparator(colWidths,numCols);
 }
 
-void ConsoleView::PrintTableRow(const std::string col1, const std::string col2, const std::string col3) {
-    // colWidths[] = {25, 25, 15}
-    std::cout << "|" << std::left  << std::setw(25) << col1;  // Column 1: exactly 25
-    std::cout << "|" << std::right << std::setw(25) << col2;  // Column 2: exactly 25
-    std::cout << "|" << std::right << std::setw(15) << col3 << "|" << std::endl;  // Column 3: exactly 15
+void ConsoleView::PrintTableRow(const std::string data[], const int colWidths[], int numCols) {
+    std::cout << "|";
+    for (int i = 0; i < numCols; i++) {
+        // Left-align all columns and pad to the specified width
+        std::cout << left << std::setw(colWidths[i]) << data[i] << "|";
+    }
+    std::cout << std::endl;
 }
 
-void ConsoleView::PrintTableSeparator() {
-    // 25 + 25 + 15 + 4 ('+' at 4 places) = 79
-    std::cout << "+-------------------------+-------------------------+---------------+" << std::endl;
+void ConsoleView::PrintTableSeparator(const int colWidths[], int numCols) {
+    std::cout << "+";
+    for (int i = 0; i < numCols; i++) {
+        for (int j = 0; j < colWidths[i]; j++) std::cout << "-";
+        std::cout << "+";
+    }
+    std::cout << std::endl;
 }
 
 std::string ConsoleView::FormatCurrency(long amount) {

@@ -88,14 +88,17 @@ public:
     /// @param numCols Number of columns (1-3)
     void PrintTableHeader(std::string columns[], int colWidths[], int numCols);
 
-    /// @brief Prints single data row in table format
-    /// @param col1 First column data (left-aligned, padded to column width)
-    /// @param col2 Second column data (right-aligned if numeric)
-    /// @param col3 Third column data (currency format if applicable)
-    void PrintTableRow(const std::string col1, const std::string col2, const std::string col3);
+    /// @brief Prints single data row in table format with proper alignment
+    /// @param data Array of column data strings
+    /// @param colWidths Array of column widths in characters
+    /// @param numCols Number of columns
+    void PrintTableRow(const string data[], const int colWidths[], int numCols);
+
 
     /// @brief Prints horizontal separator line between table rows
-    void PrintTableSeparator();
+    /// @param colWidths Array of column widths in characters
+    /// @param numCols Number of columns
+    void PrintTableSeparator(const int colWidths[], int numCols);
 
     /// @brief Prints currency value with thousand separators and VND suffix
     /// @param amount Numeric value to format (long integer)

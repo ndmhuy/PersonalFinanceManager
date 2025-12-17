@@ -124,10 +124,10 @@ void NavigationController::HandleAddIncome() {
 
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), w->GetName(),
-                          view.FormatCurrency(static_cast<long>(w->GetBalance())));
+        std::string data[] = {std::to_string(i + 1), w->GetName(), view.FormatCurrency((long)(w->GetBalance()))};
+        view.PrintTableRow(data, widths, 3);
     }
-    view.PrintTableSeparator();
+    view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 5 + wallets->Count() + 3);
     std::cout << "Enter wallet index (1-" << wallets->Count() << "): ";
@@ -135,7 +135,7 @@ void NavigationController::HandleAddIncome() {
     std::cin >> walletIdx;
     std::cin.ignore();
 
-    if (walletIdx < 1 || walletIdx > static_cast<int>(wallets->Count())) {
+    if (walletIdx < 1 || walletIdx > (int)(wallets->Count())) {
         view.ShowError("Invalid wallet selection.");
         PauseWithMessage("Press any key to continue...");
         return;
@@ -174,13 +174,14 @@ void NavigationController::HandleAddIncome() {
 
     std::string srcHeaders[] = {"Index", "Source Name", ""};
     int srcWidths[] = {10, 40, 20};
-    view.PrintTableHeader(srcHeaders, srcWidths, 2);
+    view.PrintTableHeader(srcHeaders, srcWidths, 3);
 
     for (size_t i = 0; i < sources->Count(); ++i) {
         IncomeSource* src = sources->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), src->GetName(), "");
+        std::string srcData[] = {std::to_string(i + 1), src->GetName(), ""};
+        view.PrintTableRow(srcData, srcWidths, 3);
     }
-    view.PrintTableSeparator();
+    view.PrintTableSeparator(srcWidths, 3);
 
     view.MoveToXY(5, 5 + sources->Count() + 3);
     std::cout << "Enter source index (1-" << sources->Count() << "): ";
@@ -199,8 +200,7 @@ void NavigationController::HandleAddIncome() {
 
     // Step 6: Add transaction to AppController
     try {
-        appController->AddTransaction(amount, walletId, sourceId,
-                                     TransactionType::Income, date, description);
+        appController->AddTransaction(amount, walletId, sourceId, TransactionType::Income, date, description);
         
         view.ClearScreen();
         view.PrintHeader("INCOME ADDED SUCCESSFULLY");
@@ -306,10 +306,10 @@ void NavigationController::HandleAddExpense() {
 
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), w->GetName(),
-                          view.FormatCurrency(static_cast<long>(w->GetBalance())));
+        std::string data[] = {std::to_string(i + 1), w->GetName(), view.FormatCurrency(static_cast<long>(w->GetBalance()))};
+        view.PrintTableRow(data, widths, 3);
     }
-    view.PrintTableSeparator();
+    view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 5 + wallets->Count() + 3);
     std::cout << "Enter wallet index (1-" << wallets->Count() << "): ";
@@ -356,13 +356,14 @@ void NavigationController::HandleAddExpense() {
 
     std::string catHeaders[] = {"Index", "Category Name", ""};
     int catWidths[] = {10, 40, 20};
-    view.PrintTableHeader(catHeaders, catWidths, 2);
+    view.PrintTableHeader(catHeaders, catWidths, 3);
 
     for (size_t i = 0; i < categories->Count(); ++i) {
         Category* cat = categories->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), cat->GetName(), "");
+        std::string catData[] = {std::to_string(i + 1), cat->GetName(), ""};
+        view.PrintTableRow(catData, catWidths, 3);
     }
-    view.PrintTableSeparator();
+    view.PrintTableSeparator(catWidths, 3);
 
     view.MoveToXY(5, 5 + categories->Count() + 3);
     std::cout << "Enter category index (1-" << categories->Count() << "): ";
@@ -381,14 +382,13 @@ void NavigationController::HandleAddExpense() {
 
     // Step 6: Add transaction to AppController
     try {
-        appController->AddTransaction(amount, walletId, categoryId,
-                                     TransactionType::Expense, date, description);
+        appController->AddTransaction(amount, walletId, categoryId, TransactionType::Expense, date, description);
         
         view.ClearScreen();
         view.PrintHeader("EXPENSE ADDED SUCCESSFULLY");
         view.MoveToXY(5, 5);
         view.SetColor(10); // Green
-        std::cout << "✓ Expense recorded!" << std::endl;
+        std::cout << "Expense recorded!!" << std::endl;
         view.ResetColor();
         
         view.MoveToXY(5, 7);
@@ -517,9 +517,10 @@ void NavigationController::HandleViewWallets() {
     view.PrintTableHeader(headers, widths, 3);
     for (size_t i = 0; i < wallets->Count(); ++i) {
         Wallet* w = wallets->Get(i);
-        view.PrintTableRow(std::to_string(i + 1), w->GetName(), view.FormatCurrency(static_cast<long>(w->GetBalance())));
+        std::string data[] = {std::to_string(i + 1), w->GetName(), view.FormatCurrency(static_cast<long>(w->GetBalance()))};
+        view.PrintTableRow(data, widths, 3);
     }
-    view.PrintTableSeparator();
+    view.PrintTableSeparator(widths, 3);
     PauseWithMessage("Press any key to continue...");
 }
 
@@ -585,9 +586,10 @@ void NavigationController::HandleWalletBalanceOverview() {
         Wallet* w = wallets->Get(i);
         double bal = w->GetBalance();
         std::string pct = total != 0 ? std::to_string(static_cast<int>((bal / total) * 100)) + "%" : "0%";
-        view.PrintTableRow(w->GetName(), view.FormatCurrency(static_cast<long>(bal)), pct);
+        std::string data[] = {w->GetName(), view.FormatCurrency(static_cast<long>(bal)), pct};
+        view.PrintTableRow(data, widths, 3);
     }
-    view.PrintTableSeparator();
+    view.PrintTableSeparator(widths, 3);
     PauseWithMessage("Press any key to continue...");
 }
 
