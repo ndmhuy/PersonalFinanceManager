@@ -1,8 +1,11 @@
 #include <iostream>
 #include "Controllers/AppController.h"
 #include "Controllers/NavigationController.h"
+#include "Utils/PlatformUtils.h"
 
 int main() {
+    SetupConsole();
+    
     try {
         // Initialize app controller (handles data persistence and business logic)
         AppController appController;

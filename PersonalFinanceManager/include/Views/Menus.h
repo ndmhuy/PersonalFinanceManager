@@ -1,9 +1,7 @@
-#ifndef MENUS_H
-#define MENUS_H
+#ifndef Menus_h
+#define Menus_h
 #include <string>
-#include "../Views/ConsoleView.h"
-
-using namespace std;
+#include "Views/ConsoleView.h"
 
 class Menus {
 private:
@@ -39,47 +37,47 @@ public:
 
     //MENU TEXT CONSTANTS
     // Main Dashboard Menu
-    static const string MAIN_MENU_TITLE;
-    static const string MAIN_MENU_1;
-    static const string MAIN_MENU_2;
-    static const string MAIN_MENU_3;
-    static const string MAIN_MENU_4;
-    static const string MAIN_MENU_5;
+    static const std::string MAIN_MENU_TITLE;
+    static const std::string MAIN_MENU_1;
+    static const std::string MAIN_MENU_2;
+    static const std::string MAIN_MENU_3;
+    static const std::string MAIN_MENU_4;
+    static const std::string MAIN_MENU_5;
     
     // Expense Menu
-    static const string EXPENSE_MENU_TITLE;
-    static const string EXPENSE_MENU_1;
-    static const string EXPENSE_MENU_2;
-    static const string EXPENSE_MENU_3;
-    static const string EXPENSE_MENU_4;
+    static const std::string EXPENSE_MENU_TITLE;
+    static const std::string EXPENSE_MENU_1;
+    static const std::string EXPENSE_MENU_2;
+    static const std::string EXPENSE_MENU_3;
+    static const std::string EXPENSE_MENU_4;
     
     // Income Menu
-    static const string INCOME_MENU_TITLE;
-    static const string INCOME_MENU_1;
-    static const string INCOME_MENU_2;
-    static const string INCOME_MENU_3;
-    static const string INCOME_MENU_4;
+    static const std::string INCOME_MENU_TITLE;
+    static const std::string INCOME_MENU_1;
+    static const std::string INCOME_MENU_2;
+    static const std::string INCOME_MENU_3;
+    static const std::string INCOME_MENU_4;
     
     // Wallet Menu
-    static const string WALLET_MENU_TITLE;
-    static const string WALLET_MENU_1;
-    static const string WALLET_MENU_2;
-    static const string WALLET_MENU_3;
+    static const std::string WALLET_MENU_TITLE;
+    static const std::string WALLET_MENU_1;
+    static const std::string WALLET_MENU_2;
+    static const std::string WALLET_MENU_3;
     
     // Reports Menu
-    static const string REPORTS_MENU_TITLE;
-    static const string REPORTS_MENU_1;
-    static const string REPORTS_MENU_2;
-    static const string REPORTS_MENU_3;
-    static const string REPORTS_MENU_4;
+    static const std::string REPORTS_MENU_TITLE;
+    static const std::string REPORTS_MENU_1;
+    static const std::string REPORTS_MENU_2;
+    static const std::string REPORTS_MENU_3;
+    static const std::string REPORTS_MENU_4;
     
     // Add Income Form
-    static const string ADD_INCOME_TITLE;
-    static const string SELECT_SOURCE_PROMPT;
+    static const std::string ADD_INCOME_TITLE;
+    static const std::string SELECT_SOURCE_PROMPT;
     
     // Add Expense Form  
-    static const string ADD_EXPENSE_TITLE;
-    static const string SELECT_CATEGORY_PROMPT;
+    static const std::string ADD_EXPENSE_TITLE;
+    static const std::string SELECT_CATEGORY_PROMPT;
 };
 
-#endif
+#endif // !Menus_h

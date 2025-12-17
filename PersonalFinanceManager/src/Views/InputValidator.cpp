@@ -1,30 +1,29 @@
-#include "../../include/Views/InputValidator.h"
-#include "../../include/Views/ConsoleView.h"
+#include "Views/InputValidator.h"
+#include "Views/ConsoleView.h"
 #include <iostream>
-
-using namespace std;
+#include <cctype>
 
 double InputValidator::GetValidMoney(const std::string& prompt) {
     double amount;
     while (true) {
-        cout << prompt;
-        if (cin >> amount && ValidateMoney(amount)) {
-            cin.ignore(); // Clear input buffer
+        std::cout << prompt;
+        if (std::cin >> amount && ValidateMoney(amount)) {
+            std::cin.ignore(); // Clear input buffer
             return amount;
         }
         // Invalid input
-        cin.clear();
-        cin.ignore(10000, '\n');
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
         ConsoleView view;
         view.ShowError("Invalid input! Please enter an amount greater than 0.");
     }
 }
 
 Date InputValidator::GetValidDate(const std::string& prompt) {
-    string dateStr;
+    std::string dateStr;
     while (true) {
-        cout << prompt;
-        getline(cin, dateStr);
+        std::cout << prompt;
+        getline(std::cin, dateStr);
         
         try {
             Date date = Date::FromString(dateStr);
@@ -36,15 +35,15 @@ Date InputValidator::GetValidDate(const std::string& prompt) {
         }
         
         ConsoleView view;
-        view.ShowError("Invalid date! Please enter date in format DD/MM/YYYY.");
+        view.ShowError("Invalid date! Please enter date in format YYYY-MM-DD.");
     }
 }
 
 std::string InputValidator::GetValidString(const std::string& prompt) {
-    string input;
+    std::string input;
     while (true) {
-        cout << prompt;
-        getline(cin, input);
+        std::cout << prompt;
+        getline(std::cin, input);
         
         if (ValidateString(input)) {
             return input;

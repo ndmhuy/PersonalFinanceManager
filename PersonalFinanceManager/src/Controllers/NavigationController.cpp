@@ -1,5 +1,7 @@
-#include "../../include/Controllers/NavigationController.h"
-#include <conio.h>
+#include "Controllers/NavigationController.h"
+#include "Controllers/AppController.h"
+#include "Utils/PlatformUtils.h"
+
 #include <iostream>
 
 NavigationController::NavigationController(AppController* app) : appController(app), running(false) {}
@@ -198,8 +200,7 @@ void NavigationController::HandleAddIncome() {
 
     // Step 6: Add transaction to AppController
     try {
-        appController->AddTransaction(amount, walletId, sourceId, 
-                                     TransactionType::Income, date, description);
+        appController->AddTransaction(amount, walletId, sourceId, TransactionType::Income, date, description);
         
         view.ClearScreen();
         view.PrintHeader("INCOME ADDED SUCCESSFULLY");
@@ -381,8 +382,7 @@ void NavigationController::HandleAddExpense() {
 
     // Step 6: Add transaction to AppController
     try {
-        appController->AddTransaction(amount, walletId, categoryId, 
-                                     TransactionType::Expense, date, description);
+        appController->AddTransaction(amount, walletId, categoryId, TransactionType::Expense, date, description);
         
         view.ClearScreen();
         view.PrintHeader("EXPENSE ADDED SUCCESSFULLY");
@@ -595,5 +595,5 @@ void NavigationController::HandleWalletBalanceOverview() {
 
 void NavigationController::PauseWithMessage(const std::string& msg) {
     view.PrintFooter(msg);
-    _getch();
+    GetKeyPress();
 }

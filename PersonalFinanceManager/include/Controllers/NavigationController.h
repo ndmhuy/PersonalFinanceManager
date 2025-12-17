@@ -1,19 +1,19 @@
-#ifndef NAVIGATIONCONTROLLER_H
-#define NAVIGATIONCONTROLLER_H
+#ifndef NavigationController_h
+#define NavigationController_h
 
 #include <string>
 
-// Controllers
-#include "Controllers/AppController.h"
+#include "Views/DashBoard.h"
+#include "Views/Menus.h"
+#include "Views/ConsoleView.h"
+#include "Views/InputValidator.h"
 
-// Views
-#include "../Views/DashBoard.h"
-#include "../Views/Menus.h"
-#include "../Views/ConsoleView.h"
-#include "../Views/InputValidator.h"
+// Forward Declaration
+class AppController;
 
 class NavigationController {
 public:
+    // Constructor
     NavigationController(AppController* app);
     ~NavigationController();
 
@@ -64,10 +64,8 @@ private:
     void HandleIncomeVsExpense();
     void HandleWalletBalanceOverview();
 
-   
-
     // Helper: show message and wait for key
     void PauseWithMessage(const std::string& msg);
 };
 
-#endif // NAVIGATIONCONTROLLER_H
+#endif /* NavigationController_h */
