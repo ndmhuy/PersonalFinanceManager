@@ -107,7 +107,7 @@ void NavigationController::HandleDeleteWallet() {
     view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 6 + (int)wallets->Count());
-    std::cout << "Enter wallet index to delete (1-" << wallets->Count() << "): ";
+    std::cout << "Select index (1-" << wallets->Count() << "): ";
     int idx = 0;
     std::cin >> idx;
     std::cin.ignore();

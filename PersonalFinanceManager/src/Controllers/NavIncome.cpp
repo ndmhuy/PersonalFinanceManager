@@ -78,8 +78,8 @@ void NavigationController::HandleAddIncome() {
     }
     view.PrintTableSeparator(widths, 3);
 
-    view.MoveToXY(5, 5 + wallets->Count() + 3);
-    std::cout << "Enter wallet index (1-" << wallets->Count() << "): ";
+    view.MoveToXY(5, 6 + (int)wallets->Count());
+    std::cout << "Select index (1-" << wallets->Count() << "): ";
     int walletIdx;
     std::cin >> walletIdx;
     std::cin.ignore();
@@ -132,8 +132,8 @@ void NavigationController::HandleAddIncome() {
     }
     view.PrintTableSeparator(srcWidths, 3);
 
-    view.MoveToXY(5, 5 + sources->Count() + 3);
-    std::cout << "Enter source index (1-" << sources->Count() << "): ";
+    view.MoveToXY(5, 6 + (int)sources->Count());
+    std::cout << "Select index (1-" << sources->Count() << "): ";
     int srcIdx;
     std::cin >> srcIdx;
     std::cin.ignore();
@@ -261,7 +261,7 @@ void NavigationController::HandleEditIncome() {
     view.PrintTableSeparator(widths, 6);
 
     view.MoveToXY(5, 6 + (int)incomes->Count());
-    std::cout << "Enter income index to edit (1-" << incomes->Count() << "): ";
+    std::cout << "Select index (1-" << incomes->Count() << "): ";
     int idx = 0;
     std::cin >> idx;
     std::cin.ignore();
@@ -342,7 +342,7 @@ void NavigationController::HandleDeleteIncome() {
     view.PrintTableSeparator(widths, 6);
 
     view.MoveToXY(5, 6 + (int)incomes->Count());
-    std::cout << "Enter income index to delete (1-" << incomes->Count() << "): ";
+    std::cout << "Select index (1-" << incomes->Count() << "): ";
     int idx = 0;
     std::cin >> idx;
     std::cin.ignore();

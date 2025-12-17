@@ -77,8 +77,8 @@ void NavigationController::HandleAddExpense() {
     }
     view.PrintTableSeparator(widths, 3);
 
-    view.MoveToXY(5, 5 + wallets->Count() + 3);
-    std::cout << "Enter wallet index (1-" << wallets->Count() << "): ";
+    view.MoveToXY(5, 6 + (int)wallets->Count());
+    std::cout << "Select index (1-" << wallets->Count() << "): ";
     int walletIdx;
     std::cin >> walletIdx;
     std::cin.ignore();
@@ -131,8 +131,8 @@ void NavigationController::HandleAddExpense() {
     }
     view.PrintTableSeparator(catWidths, 3);
 
-    view.MoveToXY(5, 5 + categories->Count() + 3);
-    std::cout << "Enter category index (1-" << categories->Count() << "): ";
+    view.MoveToXY(5, 6 + (int)categories->Count());
+    std::cout << "Select index (1-" << categories->Count() << "): ";
     int catIdx;
     std::cin >> catIdx;
     std::cin.ignore();
@@ -174,22 +174,203 @@ void NavigationController::HandleAddExpense() {
 }
 
 void NavigationController::HandleViewExpenses() {
+    if (!appController) {
+        view.ShowError("Controller not available.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
     view.ClearScreen();
     view.PrintHeader("VIEW EXPENSES");
-    view.ShowInfo("Feature not yet implemented (placeholder)");
+
+    ArrayList<Transaction*>* all = appController->GetTransactions();
+    ArrayList<Transaction*>* expenses = new ArrayList<Transaction*>();
+
+    for (size_t i = 0; i < all->Count(); ++i) {
+        Transaction* t = all->Get(i);
+        if (t->GetType() == TransactionType::Expense) expenses->Add(t);
+    }
+
+    if (expenses->Count() == 0) {
+        view.ShowInfo("No expenses recorded.");
+        delete expenses;
+        PauseWithMessage("Press any key to return...");
+        return;
+    }
+
+    std::string headers[] = {"Index", "Summary", "Amount"};
+    int widths[] = {6, 70, 20};
+    view.PrintTableHeader(headers, widths, 3);
+
+    for (size_t i = 0; i < expenses->Count(); ++i) {
+        Transaction* t = expenses->Get(i);
+        Wallet* w = appController->GetWalletById(t->GetWalletId());
+        Category* c = appController->GetCategoryById(t->GetCategoryId());
+        std::string walletName = (w != nullptr) ? w->GetName() : "Unknown Wallet";
+        std::string catName = (c != nullptr) ? c->GetName() : "Unknown Category";
+
+        std::string summary = walletName + " | " + catName + " | " + t->GetDate().ToString() + " | " + t->GetDescription();
+        std::string data[] = {std::to_string(i + 1), summary, view.FormatCurrency(static_cast<long>(t->GetAmount()))};
+        view.PrintTableRow(data, widths, 3);
+    }
+
+    view.PrintTableSeparator(widths, 3);
+    delete expenses;
     PauseWithMessage("Press any key to return...");
 }
 
 void NavigationController::HandleEditExpense() {
+    if (!appController) {
+        view.ShowError("Controller not available.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
     view.ClearScreen();
     view.PrintHeader("EDIT EXPENSE");
-    view.ShowInfo("Feature not yet implemented (placeholder)");
+
+    ArrayList<Transaction*>* all = appController->GetTransactions();
+    ArrayList<Transaction*>* expenses = new ArrayList<Transaction*>();
+
+    for (size_t i = 0; i < all->Count(); ++i) {
+        Transaction* t = all->Get(i);
+        if (t->GetType() == TransactionType::Expense) expenses->Add(t);
+    }
+
+    if (expenses->Count() == 0) {
+        view.ShowInfo("No expenses to edit.");
+        delete expenses;
+        PauseWithMessage("Press any key to return...");
+        return;
+    }
+
+    std::string headers[] = {"Index", "Summary", "Amount"};
+    int widths[] = {6, 70, 20};
+    view.PrintTableHeader(headers, widths, 3);
+
+    for (size_t i = 0; i < expenses->Count(); ++i) {
+        Transaction* t = expenses->Get(i);
+        Wallet* w = appController->GetWalletById(t->GetWalletId());
+        Category* c = appController->GetCategoryById(t->GetCategoryId());
+        std::string walletName = (w != nullptr) ? w->GetName() : "Unknown Wallet";
+        std::string catName = (c != nullptr) ? c->GetName() : "Unknown Category";
+
+        std::string summary = walletName + " | " + catName + " | " + t->GetDate().ToString() + " | " + t->GetDescription();
+        std::string data[] = {std::to_string(i + 1), summary, view.FormatCurrency(static_cast<long>(t->GetAmount()))};
+        view.PrintTableRow(data, widths, 3);
+    }
+
+    view.PrintTableSeparator(widths, 3);
+
+    view.MoveToXY(5, 6 + (int)expenses->Count());
+    std::cout << "Select index (1-" << expenses->Count() << "): ";
+    int idx = 0;
+    std::cin >> idx;
+    std::cin.ignore();
+
+    if (idx < 1 || idx > static_cast<int>(expenses->Count())) {
+        view.ShowError("Invalid selection.");
+        delete expenses;
+        PauseWithMessage("Press any key to return...");
+        return;
+    }
+
+    Transaction* target = expenses->Get(idx - 1);
+
+    // Show current values
+    view.ClearScreen();
+    view.PrintHeader("EDIT EXPENSE - CURRENT");
+    std::cout << "Current Amount: " << view.FormatCurrency(static_cast<long>(target->GetAmount())) << std::endl;
+    std::cout << "Current Date   : " << target->GetDate().ToString() << std::endl;
+    std::cout << "Current Desc   : " << target->GetDescription() << std::endl;
+
+    // Get new values
+    double newAmount = InputValidator::GetValidMoney("Enter new amount: ");
+    Date newDate = InputValidator::GetValidDate("Enter new date (DD/MM/YYYY): ");
+    std::string newDesc = InputValidator::GetValidString("Enter new description: ");
+
+    bool ok = appController->EditTransaction(target->GetId(), newAmount, newDate, newDesc);
+    if (ok) view.ShowSuccess("Expense updated successfully.");
+    else view.ShowError("Failed to update expense. Check logs.");
+
+    delete expenses;
     PauseWithMessage("Press any key to return...");
 }
 
 void NavigationController::HandleDeleteExpense() {
+    if (!appController) {
+        view.ShowError("Controller not available.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
     view.ClearScreen();
     view.PrintHeader("DELETE EXPENSE");
-    view.ShowInfo("Feature not yet implemented (placeholder)");
+
+    ArrayList<Transaction*>* all = appController->GetTransactions();
+    ArrayList<Transaction*>* expenses = new ArrayList<Transaction*>();
+
+    for (size_t i = 0; i < all->Count(); ++i) {
+        Transaction* t = all->Get(i);
+        if (t->GetType() == TransactionType::Expense) expenses->Add(t);
+    }
+
+    if (expenses->Count() == 0) {
+        view.ShowInfo("No expenses to delete.");
+        delete expenses;
+        PauseWithMessage("Press any key to return...");
+        return;
+    }
+
+    std::string headers[] = {"Index", "Summary", "Amount"};
+    int widths[] = {6, 70, 20};
+    view.PrintTableHeader(headers, widths, 3);
+
+    for (size_t i = 0; i < expenses->Count(); ++i) {
+        Transaction* t = expenses->Get(i);
+        Wallet* w = appController->GetWalletById(t->GetWalletId());
+        Category* c = appController->GetCategoryById(t->GetCategoryId());
+        std::string walletName = (w != nullptr) ? w->GetName() : "Unknown Wallet";
+        std::string catName = (c != nullptr) ? c->GetName() : "Unknown Category";
+
+        std::string summary = walletName + " | " + catName + " | " + t->GetDate().ToString() + " | " + t->GetDescription();
+        std::string data[] = {std::to_string(i + 1), summary, view.FormatCurrency(static_cast<long>(t->GetAmount()))};
+        view.PrintTableRow(data, widths, 3);
+    }
+
+    view.PrintTableSeparator(widths, 3);
+
+    view.MoveToXY(5, 6 + (int)expenses->Count());
+    std::cout << "Select index (1-" << expenses->Count() << "): ";
+    int idx = 0;
+    std::cin >> idx;
+    std::cin.ignore();
+
+    if (idx < 1 || idx > static_cast<int>(expenses->Count())) {
+        view.ShowError("Invalid selection.");
+        delete expenses;
+        PauseWithMessage("Press any key to return...");
+        return;
+    }
+
+    Transaction* target = expenses->Get(idx - 1);
+
+    view.MoveToXY(5, 8 + (int)expenses->Count());
+    std::cout << "Are you sure you want to delete this expense? (Y/N): ";
+    int ch = GetKeyPress();
+    std::cout << std::endl;
+
+    if (ch != 'y' && ch != 'Y') {
+        view.ShowInfo("Deletion cancelled.");
+        delete expenses;
+        PauseWithMessage("Press any key to return...");
+        return;
+    }
+
+    bool ok = appController->DeleteTransaction(target->GetId());
+    if (ok) view.ShowSuccess("Expense deleted successfully.");
+    else view.ShowError("Failed to delete expense. Check for issues.");
+
+    delete expenses;
     PauseWithMessage("Press any key to return...");
 }

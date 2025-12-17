@@ -13,6 +13,8 @@
 #include "Models/RecurringTransaction.h"
 
 #include <iostream>
+#include "Utils/HashMap.h"
+#include "Views/InputValidator.h"
 
 void NavigationController::ShowReportsFlow() {
     bool inReportsMenu = true;
@@ -44,23 +46,179 @@ void NavigationController::ShowReportsFlow() {
 }
 
 
+// Helper for aggregation results
+struct CategoryTotal {
+    std::string id;
+    double amount;
+    CategoryTotal() : id(""), amount(0.0) {}
+    CategoryTotal(const std::string& i, double a) : id(i), amount(a) {}
+};
+
+static bool CompareCategoryTotal(const CategoryTotal& a, const CategoryTotal& b) {
+    return a.amount > b.amount; // Descending
+}
+
 void NavigationController::HandleMonthlySummary() {
     view.ClearScreen();
     view.PrintHeader("MONTHLY SUMMARY");
-    ArrayList<Transaction*>* txs = appController->GetTransactions();
-    long count = txs ? txs->Count() : 0;
-    double totalBalance = appController->GetTotalBalance();
+
+    Date today = Date::GetTodayDate();
+    int month = 0;
+    std::cout << "Enter month (1-12) or 0 for current month: ";
+    if (!(std::cin >> month)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        view.ShowError("Invalid input.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+    std::cin.ignore();
+    if (month == 0) month = today.GetMonth();
+
+    int year = 0;
+    std::cout << "Enter year (e.g., 2025) or 0 for current year: ";
+    if (!(std::cin >> year)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        view.ShowError("Invalid input.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+    std::cin.ignore();
+    if (year == 0) year = today.GetYear();
+
+    if (month < 1 || month > 12 || year < 1900) {
+        view.ShowError("Invalid month or year.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
+    Date start(1, month, year);
+    Date end = Date::GetEndOfMonth(month, year);
+
+    ArrayList<Transaction*>* list = appController->GetTransactionsByDateRange(start, end);
+    if (!list || list->Count() == 0) {
+        view.ShowInfo("No transactions found for the selected month.");
+        delete list;
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
+    double totalIncome = 0.0, totalExpense = 0.0;
+    HashMap<std::string, double> expenseMap;
+
+    for (size_t i = 0; i < list->Count(); ++i) {
+        Transaction* t = list->Get(i);
+        if (t->GetType() == TransactionType::Income) totalIncome += t->GetAmount();
+        else {
+            totalExpense += t->GetAmount();
+            std::string cid = t->GetCategoryId();
+            double* existing = expenseMap.Get(cid);
+            if (existing) *existing += t->GetAmount();
+            else expenseMap.Put(cid, t->GetAmount());
+        }
+    }
+
     view.MoveToXY(5,5);
-    std::cout << "Total transactions: " << count << std::endl;
-    std::cout << "Total balance across wallets: " << view.FormatCurrency(static_cast<long>(totalBalance)) << std::endl;
-    view.ShowInfo("Detailed monthly breakdown not implemented.");
+    std::cout << "Summary for " << month << "/" << year << std::endl;
+    std::cout << "Total Income : " << view.FormatCurrency(static_cast<long>(totalIncome)) << std::endl;
+    std::cout << "Total Expense: " << view.FormatCurrency(static_cast<long>(totalExpense)) << std::endl;
+    std::cout << "Net          : " << view.FormatCurrency(static_cast<long>(totalIncome - totalExpense)) << std::endl;
+
+    if (totalExpense > 0 && expenseMap.Count() > 0) {
+        // Convert map to list
+        ArrayList<CategoryTotal> totals;
+        ArrayList<std::string> keys = expenseMap.Keys();
+        for (size_t i = 0; i < keys.Count(); ++i) {
+            std::string k = keys.Get(i);
+            double* v = expenseMap.Get(k);
+            totals.Add(CategoryTotal(k, v ? *v : 0.0));
+        }
+
+        // Sort descending
+        totals.Sort(CompareCategoryTotal);
+
+        std::cout << "\nTop spending categories:\n";
+        std::cout << "Category                            Amount          % of Expense" << std::endl;
+        for (size_t i = 0; i < totals.Count() && i < 10; ++i) {
+            Category* c = appController->GetCategoryById(totals.Get(i).id);
+            std::string name = c ? c->GetName() : "Unknown";
+            double amt = totals.Get(i).amount;
+            int pct = (totalExpense > 0) ? static_cast<int>((amt / totalExpense) * 100.0) : 0;
+            std::cout << std::left << std::setw(35) << name << std::setw(15) << view.FormatCurrency(static_cast<long>(amt)) << pct << "%" << std::endl;
+        }
+    } else {
+        view.ShowInfo("No expense categories to display for this month.");
+    }
+
+    delete list;
     PauseWithMessage("Press any key to continue...");
 }
 
 void NavigationController::HandleSpendingByCategory() {
     view.ClearScreen();
     view.PrintHeader("SPENDING BY CATEGORY");
-    view.ShowInfo("Feature not yet implemented.");
+
+    Date start = InputValidator::GetValidDate("Enter start date (YYYY-MM-DD): ");
+    Date end = InputValidator::GetValidDate("Enter end date (YYYY-MM-DD): ");
+
+    if (end < start) {
+        view.ShowError("End date must be after or equal to start date.");
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
+    ArrayList<Transaction*>* list = appController->GetTransactionsByDateRange(start, end);
+    if (!list || list->Count() == 0) {
+        view.ShowInfo("No transactions in the selected range.");
+        delete list;
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
+    HashMap<std::string, double> totalsMap;
+    double totalExpense = 0.0;
+
+    for (size_t i = 0; i < list->Count(); ++i) {
+        Transaction* t = list->Get(i);
+        if (t->GetType() == TransactionType::Expense) {
+            std::string cid = t->GetCategoryId();
+            double* ex = totalsMap.Get(cid);
+            if (ex) *ex += t->GetAmount();
+            else totalsMap.Put(cid, t->GetAmount());
+            totalExpense += t->GetAmount();
+        }
+    }
+
+    if (totalsMap.Count() == 0) {
+        view.ShowInfo("No expenses found in the range.");
+        delete list;
+        PauseWithMessage("Press any key to continue...");
+        return;
+    }
+
+    ArrayList<CategoryTotal> totals;
+    ArrayList<std::string> keys = totalsMap.Keys();
+    for (size_t i = 0; i < keys.Count(); ++i) {
+        std::string k = keys.Get(i);
+        double* v = totalsMap.Get(k);
+        totals.Add(CategoryTotal(k, v ? *v : 0.0));
+    }
+
+    totals.Sort(CompareCategoryTotal);
+
+    std::string headers[] = {"Category", "Amount", "% of Range"};
+    int widths[] = {40, 20, 15};
+    view.PrintTableHeader(headers, widths, 3);
+
+    for (size_t i = 0; i < totals.Count(); ++i) {
+        Category* c = appController->GetCategoryById(totals.Get(i).id);
+        std::string name = (c != nullptr) ? c->GetName() : std::string("Unknown");
+        std::string data[] = {name, view.FormatCurrency(static_cast<long>(totals.Get(i).amount)), std::to_string(static_cast<int>((totals.Get(i).amount / totalExpense) * 100)) + "%"};
+        view.PrintTableRow(data, widths, 3);
+    }
+
+    view.PrintTableSeparator(widths, 3);
+
+    delete list;
     PauseWithMessage("Press any key to continue...");
 }
 
