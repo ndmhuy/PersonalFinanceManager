@@ -5,7 +5,11 @@
 //  Created by Nguyen Dinh Minh Huy on 30/11/25.
 //
 
-#include "../../include/Models/Wallet.h"
+#include "Utils/BinaryFileHelper.h"
+#include "Models/Wallet.h"
+
+#include <sstream>
+#include <iomanip>
 
 // ==========================================
 // 1. CONSTRUCTORS

@@ -8,9 +8,6 @@
 #ifndef IncomeSource_h
 #define IncomeSource_h
 
-#include "../Utils/BinaryFileHelper.h"
-
-#include <iostream>
 #include <fstream>
 #include <string>
 

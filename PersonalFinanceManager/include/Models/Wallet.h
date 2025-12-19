@@ -8,13 +8,8 @@
 #ifndef Wallet_h
 #define Wallet_h
 
-#include "../Utils/BinaryFileHelper.h"
-
-#include <string>
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <iomanip>
+#include <string>
 
 /**
  * @class Wallet

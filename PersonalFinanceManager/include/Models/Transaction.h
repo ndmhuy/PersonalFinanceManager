@@ -8,15 +8,13 @@
 #ifndef Transaction_h
 #define Transaction_h
 
-#include "../Utils/Date.h"
-#include "../Utils/Enums.h"
-#include "../Utils/BinaryFileHelper.h"
+#include "Utils/Date.h"
+#include "Utils/Enums.h"
+#include "Utils/BinaryFileHelper.h"
 
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <iomanip>
-#include <sstream>
+
 
 /**
  * @class Transaction

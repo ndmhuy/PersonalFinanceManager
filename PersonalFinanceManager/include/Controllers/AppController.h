@@ -10,11 +10,11 @@
 
 #include <string>
 
-#include "../Utils/ArrayList.h"
-#include "../Utils/HashMap.h"
-#include "../Utils/Date.h"
-#include "../Utils/Enums.h"
-#include "../Views/ConsoleView.h"
+#include "Utils/ArrayList.h"
+#include "Utils/HashMap.h"
+#include "Utils/Date.h"
+#include "Utils/Enums.h"
+#include "Views/ConsoleView.h"
 
 class Transaction;
 class RecurringTransaction;

@@ -8,9 +8,6 @@
 #ifndef Category_h
 #define Category_h
 
-#include "../Utils/BinaryFileHelper.h"
-
-#include <iostream>
 #include <fstream>
 #include <string>
 

@@ -8,15 +8,9 @@
 #ifndef RecurringTransaction_h
 #define RecurringTransaction_h
 
-#include "Transaction.h"
-#include "Income.h"
-#include "Expense.h"
+#include "Utils/Date.h"
+#include "Utils/Enums.h"
 
-#include "../Utils/Date.h"
-#include "../Utils/Enums.h"
-#include "../Utils/BinaryFileHelper.h"
-
-#include <iostream>
 #include <fstream>
 #include <string>
 

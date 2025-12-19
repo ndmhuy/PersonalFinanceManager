@@ -5,7 +5,10 @@
 //  Created by Nguyen Dinh Minh Huy on 5/12/25.
 //
 
-#include "../../include/Utils/IdGenerator.h"
+#include "Utils/IdGenerator.h"
+
+#include <random>
+#include <sstream>
 
 char IdGenerator::GetRandomChar() {
     static const std::string charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
