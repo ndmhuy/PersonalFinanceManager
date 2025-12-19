@@ -23,8 +23,8 @@ char Dashboard::Display() {
     double totalBalance = (appController) ? appController->GetTotalBalance() : 0.0;
 
     view.MoveToXY(5, 5);
-    if (totalBalance < 0) view.SetColor(12); // Red color for negative balance
-    else view.SetColor(10); // Green color for positive balance
+    if (totalBalance < 0) view.SetColor(ConsoleView::COLOR_ERROR); // Red color for negative balance
+    else view.SetColor(ConsoleView::COLOR_SUCCESS); // Green color for positive balance
 
     view.PrintText("Total Balance: " + view.FormatCurrency(static_cast<long>(totalBalance)));
     view.ResetColor();

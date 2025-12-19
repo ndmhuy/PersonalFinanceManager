@@ -178,7 +178,7 @@ void NavigationController::HandleSpendingByCategory() {
 
     ArrayList<Transaction*>* list = appController->GetTransactionsByDateRange(start, end);
     if (!list || list->Count() == 0) {
-        view.ShowInfo("No transactions in the selected range.");
+view.ShowInfo("No transactions in the selected range.");
         delete list;
         PauseWithMessage("Press any key to continue...");
         return;
