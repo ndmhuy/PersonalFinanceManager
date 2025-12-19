@@ -81,6 +81,7 @@ public:
     ArrayList<Category*>* GetCategoriesList() const { return categoriesList; }
     
     // --- [NEW] CATEGORY CRUD ---
+    void EditCategory(const std::string& id, const std::string& newName);
     bool DeleteCategory(const std::string& id);
 
     void AddIncomeSource(const std::string& name);
@@ -88,6 +89,7 @@ public:
     ArrayList<IncomeSource*>* GetIncomeSourcesList() const { return incomeSourcesList; }
     
     // --- [NEW] INCOME SOURCE CRUD ---
+    void EditIncomeSource(const std::string& id, const std::string& newName);
     bool DeleteIncomeSource(const std::string& id);
 
     // 5. TRANSACTION CORE LOGIC

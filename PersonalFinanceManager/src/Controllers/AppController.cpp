@@ -511,6 +511,23 @@ bool AppController::DeleteCategory(const std::string& id) {
     return true;
 }
 
+void AppController::EditCategory(const std::string& id, const std::string& newName) {
+    Category* c = GetCategoryById(id);
+    if (!c) { if (view) view->ShowError("Category ID not found."); return; }
+    if (IsStringEmptyOrWhitespace(newName)) { if (view) view->ShowError("Category name cannot be empty."); return; }
+    c->SetName(newName);
+    if (view) view->ShowSuccess("Category updated.");
+}
+
+void AppController::EditIncomeSource(const std::string& id, const std::string& newName) {
+    IncomeSource* s = GetIncomeSourceById(id);
+    if (!s) { if (view) view->ShowError("Source ID not found."); return; }
+    if (IsStringEmptyOrWhitespace(newName)) { if (view) view->ShowError("Source name cannot be empty."); return; }
+    s->SetName(newName);
+    if (view) view->ShowSuccess("Income Source updated.");
+
+}
+
 bool AppController::DeleteIncomeSource(const std::string& id) {
     for (size_t i = 0; i < transactions->Count(); ++i) {
         Transaction* t = transactions->Get(i);
