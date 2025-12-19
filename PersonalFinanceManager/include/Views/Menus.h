@@ -50,6 +50,7 @@ public:
     static const std::string EXPENSE_MENU_2;
     static const std::string EXPENSE_MENU_3;
     static const std::string EXPENSE_MENU_4;
+    static const std::string EXPENSE_MENU_5;
     
     // Income Menu
     static const std::string INCOME_MENU_TITLE;
@@ -57,6 +58,7 @@ public:
     static const std::string INCOME_MENU_2;
     static const std::string INCOME_MENU_3;
     static const std::string INCOME_MENU_4;
+    static const std::string INCOME_MENU_5;
     
     // Wallet Menu
     static const std::string WALLET_MENU_TITLE;
@@ -78,6 +80,22 @@ public:
     // Add Expense Form  
     static const std::string ADD_EXPENSE_TITLE;
     static const std::string SELECT_CATEGORY_PROMPT;
+
+    // CATEGORY & SOURCE MANAGEMENT MENUS
+    char DisplayCategoryMenu();
+    char DisplaySourceMenu();
+
+    static const std::string CATEGORY_MENU_TITLE;
+    static const std::string CATEGORY_MENU_1;
+    static const std::string CATEGORY_MENU_2;
+    static const std::string CATEGORY_MENU_3;
+    static const std::string CATEGORY_MENU_4;
+
+    static const std::string SOURCE_MENU_TITLE;
+    static const std::string SOURCE_MENU_1;
+    static const std::string SOURCE_MENU_2;
+    static const std::string SOURCE_MENU_3;
+    static const std::string SOURCE_MENU_4;
 };
 
 #endif // !Menus_h

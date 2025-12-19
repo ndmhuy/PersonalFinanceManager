@@ -37,6 +37,9 @@ void NavigationController::ShowExpenseFlow() {
             case '4':
                 HandleDeleteExpense();
                 break;
+            case '5':
+                ShowCategoryFlow();
+                break;
             default:
                 view.ShowError("Invalid selection. Try again.");
                 PauseWithMessage("Press any key to continue...");
@@ -337,4 +340,104 @@ void NavigationController::HandleDeleteExpense() {
 
     delete expenses;
     PauseWithMessage("Press any key to return...");
+}
+
+// ===== CATEGORY MANAGEMENT =====
+void NavigationController::ShowCategoryFlow() {
+    bool inCatMenu = true;
+    while (inCatMenu) {
+        char c = menus.DisplayCategoryMenu();
+        if (c == 27) break;
+        switch (c) {
+            case '1': HandleCreateCategory(); break;
+            case '2': HandleViewCategories(); break;
+            case '3': HandleEditCategory(); break;
+            case '4': HandleDeleteCategory(); break;
+            default: view.ShowError("Invalid selection. Try again."); PauseWithMessage("Press any key to continue..."); break;
+        }
+    }
+}
+
+void NavigationController::HandleCreateCategory() {
+    view.ClearScreen();
+    view.PrintHeader("CREATE CATEGORY");
+    std::string name = InputValidator::GetValidString("Enter category name: ");
+    appController->AddCategory(name);
+    PauseWithMessage("Press any key to continue...");
+}
+
+void NavigationController::HandleViewCategories() {
+    view.ClearScreen();
+    view.PrintHeader("CATEGORIES");
+    ArrayList<Category*>* cats = appController->GetCategoriesList();
+    if (!cats || cats->Count() == 0) { view.ShowInfo("No categories available."); PauseWithMessage("Press any key to continue..."); return; }
+
+    std::string headers[] = {"Index", "ID", "Name"};
+    int widths[] = {8, 20, 40};
+    view.PrintTableHeader(headers, widths, 3);
+    for (size_t i=0;i<cats->Count();++i) {
+        Category* c = cats->Get(i);
+        std::string data[] = {std::to_string((int)i+1), c->GetId(), c->GetName()};
+        view.PrintTableRow(data, widths, 3);
+    }
+    view.PrintTableSeparator(widths, 3);
+    PauseWithMessage("Press any key to continue...");
+}
+
+void NavigationController::HandleEditCategory() {
+    view.ClearScreen();
+    view.PrintHeader("EDIT CATEGORY");
+    ArrayList<Category*>* cats = appController->GetCategoriesList();
+    if (!cats || cats->Count() == 0) { view.ShowInfo("No categories to edit."); PauseWithMessage("Press any key to continue..."); return; }
+
+    std::string headers[] = {"Index", "ID", "Name"};
+    int widths[] = {8, 20, 40};
+    view.PrintTableHeader(headers, widths, 3);
+    for (size_t i=0;i<cats->Count();++i) {
+        Category* c = cats->Get(i);
+        std::string data[] = {std::to_string((int)i+1), c->GetId(), c->GetName()};
+        view.PrintTableRow(data, widths, 3);
+    }
+    view.PrintTableSeparator(widths, 3);
+
+    view.MoveToXY(5, 9 + (int)cats->Count());
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string((int)cats->Count()) + ") (0 to quit): ", 1, (int)cats->Count(), 5, 9 + (int)cats->Count());
+    if (idx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
+
+    Category* target = cats->Get(idx-1);
+    std::string newName = InputValidator::GetValidString("Enter new name: ");
+    appController->EditCategory(target->GetId(), newName);
+    PauseWithMessage("Press any key to continue...");
+}
+
+void NavigationController::HandleDeleteCategory() {
+    view.ClearScreen();
+    view.PrintHeader("DELETE CATEGORY");
+    ArrayList<Category*>* cats = appController->GetCategoriesList();
+    if (!cats || cats->Count() == 0) { view.ShowInfo("No categories to delete."); PauseWithMessage("Press any key to continue..."); return; }
+
+    std::string headers[] = {"Index", "ID", "Name"};
+    int widths[] = {8, 20, 40};
+    view.PrintTableHeader(headers, widths, 3);
+    for (size_t i=0;i<cats->Count();++i) {
+        Category* c = cats->Get(i);
+        std::string data[] = {std::to_string((int)i+1), c->GetId(), c->GetName()};
+        view.PrintTableRow(data, widths, 3);
+    }
+    view.PrintTableSeparator(widths, 3);
+
+    view.MoveToXY(5, 9 + (int)cats->Count());
+    int idx = InputValidator::GetValidIndex("Select index to delete (1-" + std::to_string((int)cats->Count()) + ") (0 to cancel): ", 1, (int)cats->Count(), 5, 9 + (int)cats->Count());
+    if (idx == 0) { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
+
+    Category* target = cats->Get(idx-1);
+    view.MoveToXY(5, 11 + (int)cats->Count());
+    std::cout << "Are you sure you want to delete category '" << target->GetName() << "'? (Y/N): ";
+    int ch = GetKeyPress();
+    view.PrintText("");
+    if (ch != 'y' && ch != 'Y') { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
+
+    bool ok = appController->DeleteCategory(target->GetId());
+    if (ok) view.ShowSuccess("Category deleted."); else view.ShowError("Failed to delete category.");
+    PauseWithMessage("Press any key to continue...");
 }

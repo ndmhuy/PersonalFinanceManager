@@ -34,7 +34,7 @@ char Menus::DisplayMainMenu() {
 char Menus::DisplayExpenseMenu() {
     view.ClearScreen();
     view.PrintHeader(EXPENSE_MENU_TITLE);
-    view.PrintBox(8,5,30,6);
+    view.PrintBox(8,5,30,7);
 
     view.MoveToXY(10, 6);
     cout << EXPENSE_MENU_1 << endl;
@@ -44,8 +44,10 @@ char Menus::DisplayExpenseMenu() {
     cout << EXPENSE_MENU_3 << endl;
     view.MoveToXY(10, 9);
     cout << EXPENSE_MENU_4 << endl;
+    view.MoveToXY(10, 10);
+    cout << EXPENSE_MENU_5 << endl;
 
-    view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Expense Menu");
+    view.PrintShortcutFooter("[1-5] Select | [ESC] Back", "Expense Menu");
     
     return GetKeyPress();
 }
@@ -54,7 +56,7 @@ char Menus::DisplayExpenseMenu() {
 char Menus::DisplayIncomeMenu() {
     view.ClearScreen();
     view.PrintHeader(INCOME_MENU_TITLE);
-    view.PrintBox(8,5,30,6);
+    view.PrintBox(8,5,30,7);
 
     view.MoveToXY(10, 6);
     cout << INCOME_MENU_1 << endl;
@@ -64,8 +66,10 @@ char Menus::DisplayIncomeMenu() {
     cout << INCOME_MENU_3 << endl;
     view.MoveToXY(10, 9);
     cout << INCOME_MENU_4 << endl;
+    view.MoveToXY(10, 10);
+    cout << INCOME_MENU_5 << endl;
 
-    view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Income Menu");
+    view.PrintShortcutFooter("[1-5] Select | [ESC] Back", "Income Menu");
     
     return GetKeyPress();
 }
@@ -108,6 +112,44 @@ char Menus::DisplayReportsMenu() {
     return GetKeyPress();
 }
 
+//CATEGORY MENU IMPLEMENTATION
+char Menus::DisplayCategoryMenu() {
+    view.ClearScreen();
+    view.PrintHeader(CATEGORY_MENU_TITLE);
+    view.PrintBox(8,5,40,6);
+
+    view.MoveToXY(10, 6);
+    cout << CATEGORY_MENU_1 << endl;
+    view.MoveToXY(10, 7);
+    cout << CATEGORY_MENU_2 << endl;
+    view.MoveToXY(10, 8);
+    cout << CATEGORY_MENU_3 << endl;
+    view.MoveToXY(10, 9);
+    cout << CATEGORY_MENU_4 << endl;
+
+    view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Categories");
+    return GetKeyPress();
+}
+
+//SOURCE MENU IMPLEMENTATION
+char Menus::DisplaySourceMenu() {
+    view.ClearScreen();
+    view.PrintHeader(SOURCE_MENU_TITLE);
+    view.PrintBox(8,5,40,6);
+
+    view.MoveToXY(10, 6);
+    cout << SOURCE_MENU_1 << endl;
+    view.MoveToXY(10, 7);
+    cout << SOURCE_MENU_2 << endl;
+    view.MoveToXY(10, 8);
+    cout << SOURCE_MENU_3 << endl;
+    view.MoveToXY(10, 9);
+    cout << SOURCE_MENU_4 << endl;
+
+    view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Sources");
+    return GetKeyPress();
+}
+
 //STRING CONSTANTS
 // Main Menu
 const string Menus::MAIN_MENU_TITLE = "PERSONAL FINANCE MANAGER - MAIN MENU";
@@ -123,6 +165,7 @@ const string Menus::EXPENSE_MENU_1 = "1. Add Expense";
 const string Menus::EXPENSE_MENU_2 = "2. View Expenses";
 const string Menus::EXPENSE_MENU_3 = "3. Edit Expense";
 const string Menus::EXPENSE_MENU_4 = "4. Delete Expense";
+const string Menus::EXPENSE_MENU_5 = "5. Manage Categories";
 
 // Income Menu
 const string Menus::INCOME_MENU_TITLE = "INCOME MANAGEMENT";
@@ -130,6 +173,7 @@ const string Menus::INCOME_MENU_1 = "1. Add Income";
 const string Menus::INCOME_MENU_2 = "2. View Income";
 const string Menus::INCOME_MENU_3 = "3. Edit Income";
 const string Menus::INCOME_MENU_4 = "4. Delete Income";
+const string Menus::INCOME_MENU_5 = "5. Manage Sources";
 
 // Wallet Menu
 const string Menus::WALLET_MENU_TITLE = "WALLET MANAGEMENT";
@@ -151,3 +195,17 @@ const string Menus::SELECT_SOURCE_PROMPT = "Enter Income Source ID: ";
 // Add Expense Form
 const string Menus::ADD_EXPENSE_TITLE = "=== ADD EXPENSE ===";
 const string Menus::SELECT_CATEGORY_PROMPT = "Enter Category ID: ";
+
+// Category Management
+const string Menus::CATEGORY_MENU_TITLE = "MANAGE CATEGORIES";
+const string Menus::CATEGORY_MENU_1 = "1. Create Category";
+const string Menus::CATEGORY_MENU_2 = "2. View Categories";
+const string Menus::CATEGORY_MENU_3 = "3. Edit Category";
+const string Menus::CATEGORY_MENU_4 = "4. Delete Category";
+
+// Source Management
+const string Menus::SOURCE_MENU_TITLE = "MANAGE INCOME SOURCES";
+const string Menus::SOURCE_MENU_1 = "1. Create Source";
+const string Menus::SOURCE_MENU_2 = "2. View Sources";
+const string Menus::SOURCE_MENU_3 = "3. Edit Source";
+const string Menus::SOURCE_MENU_4 = "4. Delete Source";

@@ -38,6 +38,9 @@ void NavigationController::ShowIncomeFlow() {
             case '4':
                 HandleDeleteIncome();
                 break;
+            case '5':
+                ShowSourceFlow();
+                break;
             default:
                 view.ShowError("Invalid selection. Try again.");
                 PauseWithMessage("Press any key to continue...");
@@ -333,5 +336,105 @@ void NavigationController::HandleDeleteIncome() {
     if (ok) view.ShowSuccess("Income deleted successfully.");
     else view.ShowError("Failed to delete income.");
 
+    PauseWithMessage("Press any key to continue...");
+}
+
+// ===== SOURCE MANAGEMENT =====
+void NavigationController::ShowSourceFlow() {
+    bool inSrc = true;
+    while (inSrc) {
+        char c = menus.DisplaySourceMenu();
+        if (c == 27) break;
+        switch (c) {
+            case '1': HandleCreateSource(); break;
+            case '2': HandleViewSources(); break;
+            case '3': HandleEditSource(); break;
+            case '4': HandleDeleteSource(); break;
+            default: view.ShowError("Invalid selection. Try again."); PauseWithMessage("Press any key to continue..."); break;
+        }
+    }
+}
+
+void NavigationController::HandleCreateSource() {
+    view.ClearScreen();
+    view.PrintHeader("CREATE SOURCE");
+    std::string name = InputValidator::GetValidString("Enter source name: ");
+    appController->AddIncomeSource(name);
+    PauseWithMessage("Press any key to continue...");
+}
+
+void NavigationController::HandleViewSources() {
+    view.ClearScreen();
+    view.PrintHeader("SOURCES");
+    ArrayList<IncomeSource*>* srcs = appController->GetIncomeSourcesList();
+    if (!srcs || srcs->Count() == 0) { view.ShowInfo("No sources available."); PauseWithMessage("Press any key to continue..."); return; }
+
+    std::string headers[] = {"Index", "ID", "Name"};
+    int widths[] = {8, 20, 40};
+    view.PrintTableHeader(headers, widths, 3);
+    for (size_t i=0;i<srcs->Count();++i) {
+        IncomeSource* s = srcs->Get(i);
+        std::string data[] = {std::to_string((int)i+1), s->GetId(), s->GetName()};
+        view.PrintTableRow(data, widths, 3);
+    }
+    view.PrintTableSeparator(widths, 3);
+    PauseWithMessage("Press any key to continue...");
+}
+
+void NavigationController::HandleEditSource() {
+    view.ClearScreen();
+    view.PrintHeader("EDIT SOURCE");
+    ArrayList<IncomeSource*>* srcs = appController->GetIncomeSourcesList();
+    if (!srcs || srcs->Count() == 0) { view.ShowInfo("No sources to edit."); PauseWithMessage("Press any key to continue..."); return; }
+
+    std::string headers[] = {"Index", "ID", "Name"};
+    int widths[] = {8, 20, 40};
+    view.PrintTableHeader(headers, widths, 3);
+    for (size_t i=0;i<srcs->Count();++i) {
+        IncomeSource* s = srcs->Get(i);
+        std::string data[] = {std::to_string((int)i+1), s->GetId(), s->GetName()};
+        view.PrintTableRow(data, widths, 3);
+    }
+    view.PrintTableSeparator(widths, 3);
+
+    view.MoveToXY(5, 9 + (int)srcs->Count());
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string((int)srcs->Count()) + ") (0 to quit): ", 1, (int)srcs->Count(), 5, 9 + (int)srcs->Count());
+    if (idx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
+
+    IncomeSource* target = srcs->Get(idx-1);
+    std::string newName = InputValidator::GetValidString("Enter new name: ");
+    appController->EditIncomeSource(target->GetId(), newName);
+    PauseWithMessage("Press any key to continue...");
+}
+
+void NavigationController::HandleDeleteSource() {
+    view.ClearScreen();
+    view.PrintHeader("DELETE SOURCE");
+    ArrayList<IncomeSource*>* srcs = appController->GetIncomeSourcesList();
+    if (!srcs || srcs->Count() == 0) { view.ShowInfo("No sources to delete."); PauseWithMessage("Press any key to continue..."); return; }
+
+    std::string headers[] = {"Index", "ID", "Name"};
+    int widths[] = {8, 20, 40};
+    view.PrintTableHeader(headers, widths, 3);
+    for (size_t i=0;i<srcs->Count();++i) {
+        IncomeSource* s = srcs->Get(i);
+        std::string data[] = {std::to_string((int)i+1), s->GetId(), s->GetName()};
+        view.PrintTableRow(data, widths, 3);
+    }
+    view.PrintTableSeparator(widths, 3);
+
+    view.MoveToXY(5, 9 + (int)srcs->Count());
+    int idx = InputValidator::GetValidIndex("Select index to delete (1-" + std::to_string((int)srcs->Count()) + ") (0 to cancel): ", 1, (int)srcs->Count(), 5, 9 + (int)srcs->Count());
+    if (idx == 0) { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
+
+    IncomeSource* target = srcs->Get(idx-1);
+    view.MoveToXY(5, 11 + (int)srcs->Count());
+    std::cout << "Are you sure you want to delete source '" << target->GetName() << "'? (Y/N): ";
+    int ch = GetKeyPress();
+    view.PrintText("");
+    if (ch != 'y' && ch != 'Y') { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
+
+    bool ok = appController->DeleteIncomeSource(target->GetId());
+    if (ok) view.ShowSuccess("Source deleted."); else view.ShowError("Failed to delete source.");
     PauseWithMessage("Press any key to continue...");
 }

@@ -52,6 +52,20 @@ private:
     void HandleViewWallets();
     void HandleDeleteWallet();
 
+    // Category handlers
+    void ShowCategoryFlow();
+    void HandleCreateCategory();
+    void HandleViewCategories();
+    void HandleEditCategory();
+    void HandleDeleteCategory();
+
+    // Source handlers
+    void ShowSourceFlow();
+    void HandleCreateSource();
+    void HandleViewSources();
+    void HandleEditSource();
+    void HandleDeleteSource();
+
     // Reports handlers
     void HandleMonthlySummary();
     void HandleSpendingByCategory();
