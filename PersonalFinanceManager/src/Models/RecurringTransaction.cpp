@@ -12,6 +12,7 @@
 #include "Utils/BinaryFileHelper.h"
 #include <sstream>
 #include <iomanip>
+#include <ctime>
 
 // ==========================================
 // 1. CONSTRUCTORS
