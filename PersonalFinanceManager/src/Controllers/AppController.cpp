@@ -473,26 +473,49 @@ void AppController::ProcessRecurringTransactions() {
     }
 }
 
-// --- [UPDATE] Optimized Date Range Filter ---
+// --- [OPTIMIZATION] Binary Search for Date Range ---
 ArrayList<Transaction*>* AppController::GetTransactionsByDateRange(Date start, Date end) {
     ArrayList<Transaction*>* result = new ArrayList<Transaction*>();
 
-    // 1. Sort before searching (Essential for optimization)
+    // 1. Đảm bảo danh sách đã được sắp xếp tăng dần theo ngày
+    // (Lưu ý: SaveData đã sort, nhưng nếu vừa thêm mới thì cần sort lại để Binary Search chạy đúng)
     transactions->Sort(CompareTransactionsByDate);
 
-    for (size_t i = 0; i < transactions->Count(); ++i) {
-        Transaction* t = transactions->Get(i);
-        
-        // 2. Early Exit: If current date > end date, no need to check further
-        if (t->GetDate() > end) {
-            break; 
-        }
+    if (transactions->Count() == 0) return result;
 
-        // 3. Add to result if >= start
-        if (t->GetDate() >= start) {
+    // 2. BINARY SEARCH (Tìm vị trí phần tử đầu tiên có Date >= start)
+    // Thuật toán: Lower Bound
+    int low = 0;
+    int high = static_cast<int>(transactions->Count()) - 1;
+    int startIndex = -1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        Transaction* midItem = transactions->Get(mid);
+
+        if (midItem->GetDate() >= start) {
+            startIndex = mid;   // Có thể đây là đáp án, nhưng thử tìm bên trái xem còn không
+            high = mid - 1;
+        } else {
+            low = mid + 1;      // Ngày bé hơn start -> Tìm bên phải
+        }
+    }
+
+    // 3. Duyệt từ startIndex và dừng ngay khi vượt quá endDate (Early Exit)
+    if (startIndex != -1) {
+        for (size_t i = static_cast<size_t>(startIndex); i < transactions->Count(); ++i) {
+            Transaction* t = transactions->Get(i);
+            
+            // Nếu ngày hiện tại đã lớn hơn ngày kết thúc -> Dừng ngay lập tức
+            if (t->GetDate() > end) {
+                break; 
+            }
+            
+            // Chắc chắn t nằm trong khoảng [start, end] vì logic trên
             result->Add(t);
         }
     }
+
     return result;
 }
 
