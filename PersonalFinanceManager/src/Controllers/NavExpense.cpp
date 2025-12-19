@@ -82,7 +82,7 @@ void NavigationController::HandleAddExpense() {
 
     // Select wallet using robust integer input
     view.MoveToXY(5, 9 + (int)wallets->Count());
-    int walletIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(wallets->Count())) + ") (0 to quit): ", 1, static_cast<int>(wallets->Count()), 5, 9 + static_cast<int>(wallets->Count()));
+    int walletIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(wallets->Count())) + ") (0 to cancel): ", 1, static_cast<int>(wallets->Count()), 5, 9 + static_cast<int>(wallets->Count()));
     if (walletIdx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
     Wallet* selectedWallet = wallets->Get(walletIdx - 1);
     std::string walletId = selectedWallet->GetId();
@@ -95,7 +95,7 @@ void NavigationController::HandleAddExpense() {
     // Step 3: Get Date
     view.ClearScreen();
     view.PrintHeader("ADD EXPENSE - DATE");
-    Date date = InputValidator::GetValidDate("Enter date (YYYY-MM-DD): ");
+    Date date = InputValidator::GetValidDate("Enter date (YYYY-MM-DD) or 'T' for today: ");
 
     // Step 4: Get Description
     view.ClearScreen();
@@ -128,7 +128,7 @@ void NavigationController::HandleAddExpense() {
 
     // Select category using robust integer input
     view.MoveToXY(5, 9 + (int)categories->Count());
-    int catIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(categories->Count())) + ") (0 to quit): ", 1, static_cast<int>(categories->Count()), 5, 9 + static_cast<int>(categories->Count()));
+    int catIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(categories->Count())) + ") (0 to cancel): ", 1, static_cast<int>(categories->Count()), 5, 9 + static_cast<int>(categories->Count()));
     if (catIdx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
     Category* selectedCategory = categories->Get(catIdx - 1);
     std::string categoryId = selectedCategory->GetId();
@@ -140,7 +140,6 @@ void NavigationController::HandleAddExpense() {
         view.ClearScreen();
         view.PrintHeader("EXPENSE ADDED SUCCESSFULLY");
         view.MoveToXY(5, 5);
-        view.ShowSuccess("Expense recorded!!");
         
         view.MoveToXY(5, 7);
         view.PrintText("Wallet: " + selectedWallet->GetName());
@@ -263,12 +262,11 @@ void NavigationController::HandleEditExpense() {
 
     // Get new values
     double newAmount = InputValidator::GetValidMoney("Enter new amount: ");
-    Date newDate = InputValidator::GetValidDate("Enter new date (YYYY-MM-DD): ");
+    Date newDate = InputValidator::GetValidDate("Enter new date (YYYY-MM-DD) or 'T' for today: ");
     std::string newDesc = InputValidator::GetValidString("Enter new description: ");
 
     bool ok = appController->EditTransaction(target->GetId(), newAmount, newDate, newDesc);
-    if (ok) view.ShowSuccess("Expense updated successfully.");
-    else view.ShowError("Failed to update expense. Check logs.");
+    (void)ok; // AppController emits feedback; avoid duplicate messages.
 
     delete expenses;
     PauseWithMessage("Press any key to return...");
@@ -318,7 +316,7 @@ void NavigationController::HandleDeleteExpense() {
     view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 9 + (int)expenses->Count());
-    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(expenses->Count())) + ") (0 to quit): ", 1, static_cast<int>(expenses->Count()), 5, 9 + static_cast<int>(expenses->Count()));
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(expenses->Count())) + ") (0 to cancel): ", 1, static_cast<int>(expenses->Count()), 5, 9 + static_cast<int>(expenses->Count()));
     if (idx == 0) { view.ShowInfo("Selection cancelled."); delete expenses; PauseWithMessage("Press any key to return..."); return; }
     Transaction* target = expenses->Get(idx - 1);
 
@@ -334,9 +332,7 @@ void NavigationController::HandleDeleteExpense() {
         return;
     }
 
-    bool ok = appController->DeleteTransaction(target->GetId());
-    if (ok) view.ShowSuccess("Expense deleted successfully.");
-    else view.ShowError("Failed to delete expense. Check for issues.");
+    appController->DeleteTransaction(target->GetId());
 
     delete expenses;
     PauseWithMessage("Press any key to return...");
@@ -361,7 +357,8 @@ void NavigationController::ShowCategoryFlow() {
 void NavigationController::HandleCreateCategory() {
     view.ClearScreen();
     view.PrintHeader("CREATE CATEGORY");
-    std::string name = InputValidator::GetValidString("Enter category name: ");
+    std::string name = InputValidator::GetValidString("Enter category name (0 to cancel): ");
+    if (name == "0") { view.ShowInfo("Category creation cancelled."); PauseWithMessage("Press any key to continue..."); return; }
     appController->AddCategory(name);
     PauseWithMessage("Press any key to continue...");
 }
@@ -401,7 +398,7 @@ void NavigationController::HandleEditCategory() {
     view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 9 + (int)cats->Count());
-    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string((int)cats->Count()) + ") (0 to quit): ", 1, (int)cats->Count(), 5, 9 + (int)cats->Count());
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string((int)cats->Count()) + ") (0 to cancel): ", 1, (int)cats->Count(), 5, 9 + (int)cats->Count());
     if (idx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
 
     Category* target = cats->Get(idx-1);
@@ -437,7 +434,6 @@ void NavigationController::HandleDeleteCategory() {
     view.PrintText("");
     if (ch != 'y' && ch != 'Y') { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
 
-    bool ok = appController->DeleteCategory(target->GetId());
-    if (ok) view.ShowSuccess("Category deleted."); else view.ShowError("Failed to delete category.");
+    appController->DeleteCategory(target->GetId());
     PauseWithMessage("Press any key to continue...");
 }

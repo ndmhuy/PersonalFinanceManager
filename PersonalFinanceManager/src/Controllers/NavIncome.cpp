@@ -82,7 +82,7 @@ void NavigationController::HandleAddIncome() {
     view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 9 + (int)wallets->Count());
-    int walletIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(wallets->Count())) + ") (0 to quit): ", 1, static_cast<int>(wallets->Count()), 5, 9 + static_cast<int>(wallets->Count()));
+    int walletIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(wallets->Count())) + ") (0 to cancel): ", 1, static_cast<int>(wallets->Count()), 5, 9 + static_cast<int>(wallets->Count()));
     if (walletIdx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
     Wallet* selectedWallet = wallets->Get(walletIdx - 1);
     std::string walletId = selectedWallet->GetId();
@@ -95,7 +95,7 @@ void NavigationController::HandleAddIncome() {
     // Step 3: Get Date
     view.ClearScreen();
     view.PrintHeader("ADD INCOME - DATE");
-    Date date = InputValidator::GetValidDate("Enter date (YYYY-MM-DD): ");
+    Date date = InputValidator::GetValidDate("Enter date (YYYY-MM-DD) or 'T' for today: ");
 
     // Step 4: Get Description
     view.ClearScreen();
@@ -127,7 +127,7 @@ void NavigationController::HandleAddIncome() {
     view.PrintTableSeparator(srcWidths, 2);
 
     view.MoveToXY(5, 9 + (int)sources->Count());
-    int srcIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(sources->Count())) + ") (0 to quit): ", 1, static_cast<int>(sources->Count()), 5, 9 + static_cast<int>(sources->Count()));
+    int srcIdx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(sources->Count())) + ") (0 to cancel): ", 1, static_cast<int>(sources->Count()), 5, 9 + static_cast<int>(sources->Count()));
     if (srcIdx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
     IncomeSource* selectedSource = sources->Get(srcIdx - 1);
     std::string sourceId = selectedSource->GetId();
@@ -139,7 +139,6 @@ void NavigationController::HandleAddIncome() {
         view.ClearScreen();
         view.PrintHeader("INCOME ADDED SUCCESSFULLY");
         view.MoveToXY(5, 5);
-        view.ShowSuccess("Income recorded!");
         
         view.MoveToXY(5, 7);
         view.PrintText("Wallet: " + selectedWallet->GetName());
@@ -246,7 +245,7 @@ void NavigationController::HandleEditIncome() {
     view.PrintTableSeparator(widths, 6);
 
     view.MoveToXY(5, 9 + (int)incomes->Count());
-    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(incomes->Count())) + ") (0 to quit): ", 1, static_cast<int>(incomes->Count()), 5, 9 + static_cast<int>(incomes->Count()));
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(incomes->Count())) + ") (0 to cancel): ", 1, static_cast<int>(incomes->Count()), 5, 9 + static_cast<int>(incomes->Count()));
     if (idx == 0) { view.ShowInfo("Selection cancelled."); delete incomes; PauseWithMessage("Press any key to continue..."); return; }
     Transaction* target = incomes->Get(idx - 1);
 
@@ -263,13 +262,12 @@ void NavigationController::HandleEditIncome() {
     view.PrintText("Current Description: " + target->GetDescription());
 
     double newAmount = InputValidator::GetValidMoney("Enter new amount: ");
-    Date newDate = InputValidator::GetValidDate("Enter new date (YYYY-MM-DD): ");
+    Date newDate = InputValidator::GetValidDate("Enter new date (YYYY-MM-DD) or 'T' for today: ");
     std::string newDesc = InputValidator::GetValidString("Enter new description: ");
 
-    bool ok = appController->EditTransaction(target->GetId(), newAmount, newDate, newDesc);
-    if (ok) view.ShowSuccess("Income updated successfully.");
-    else view.ShowError("Failed to update income.");
+    appController->EditTransaction(target->GetId(), newAmount, newDate, newDesc);
 
+    delete incomes;
     PauseWithMessage("Press any key to continue...");
 }
 
@@ -317,7 +315,7 @@ void NavigationController::HandleDeleteIncome() {
     view.PrintTableSeparator(widths, 6);
 
     view.MoveToXY(5, 9 + (int)incomes->Count());
-    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(incomes->Count())) + ") (0 to quit): ", 1, static_cast<int>(incomes->Count()), 5, 9 + static_cast<int>(incomes->Count()));
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string(static_cast<int>(incomes->Count())) + ") (0 to cancel): ", 1, static_cast<int>(incomes->Count()), 5, 9 + static_cast<int>(incomes->Count()));
     if (idx == 0) { view.ShowInfo("Selection cancelled."); delete incomes; PauseWithMessage("Press any key to continue..."); return; }
     Transaction* target = incomes->Get(idx - 1);
     view.MoveToXY(5, 11 + (int)incomes->Count());
@@ -332,10 +330,8 @@ void NavigationController::HandleDeleteIncome() {
         return;
     }
 
-    bool ok = appController->DeleteTransaction(target->GetId());
-    if (ok) view.ShowSuccess("Income deleted successfully.");
-    else view.ShowError("Failed to delete income.");
-
+    appController->DeleteTransaction(target->GetId());
+    delete incomes;
     PauseWithMessage("Press any key to continue...");
 }
 
@@ -358,7 +354,8 @@ void NavigationController::ShowSourceFlow() {
 void NavigationController::HandleCreateSource() {
     view.ClearScreen();
     view.PrintHeader("CREATE SOURCE");
-    std::string name = InputValidator::GetValidString("Enter source name: ");
+    std::string name = InputValidator::GetValidString("Enter source name (0 to cancel): ");
+    if (name == "0") { view.ShowInfo("Source creation cancelled."); PauseWithMessage("Press any key to continue..."); return; }
     appController->AddIncomeSource(name);
     PauseWithMessage("Press any key to continue...");
 }
@@ -398,7 +395,7 @@ void NavigationController::HandleEditSource() {
     view.PrintTableSeparator(widths, 3);
 
     view.MoveToXY(5, 9 + (int)srcs->Count());
-    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string((int)srcs->Count()) + ") (0 to quit): ", 1, (int)srcs->Count(), 5, 9 + (int)srcs->Count());
+    int idx = InputValidator::GetValidIndex("Select index (1-" + std::to_string((int)srcs->Count()) + ") (0 to cancel): ", 1, (int)srcs->Count(), 5, 9 + (int)srcs->Count());
     if (idx == 0) { view.ShowInfo("Selection cancelled."); PauseWithMessage("Press any key to continue..."); return; }
 
     IncomeSource* target = srcs->Get(idx-1);
@@ -434,7 +431,6 @@ void NavigationController::HandleDeleteSource() {
     view.PrintText("");
     if (ch != 'y' && ch != 'Y') { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
 
-    bool ok = appController->DeleteIncomeSource(target->GetId());
-    if (ok) view.ShowSuccess("Source deleted."); else view.ShowError("Failed to delete source.");
+    appController->DeleteIncomeSource(target->GetId());
     PauseWithMessage("Press any key to continue...");
 }
