@@ -62,7 +62,6 @@ void RecurringTransaction::SetDescription(const std::string& d) { description = 
 // 4. AUTOMATION LOGIC
 // ==========================================
 
-// --- ĐÂY LÀ HÀM BẠN ĐANG BỊ THIẾU HOẶC LỖI ---
 Transaction* RecurringTransaction::GenerateTransaction(std::string newTransId, const Date& dateToCreate) {
     Transaction* t = nullptr;
     std::string recurringDesc = description + " (Auto)";
@@ -78,7 +77,6 @@ Transaction* RecurringTransaction::GenerateTransaction(std::string newTransId, c
     return t;
 }
 
-// --- LOGIC MỚI CỦA MINH HUY ---
 bool RecurringTransaction::ShouldGenerate(const Date& currentDate) {
     // 1. Check End Date
     if (endDate.IsValid() && currentDate > endDate) return false;
@@ -203,4 +201,4 @@ RecurringTransaction* RecurringTransaction::FromBinary(std::ifstream& fin) {
     rt->SetLastGeneratedDate(lastGen);
     
     return rt;
-}
+}   
