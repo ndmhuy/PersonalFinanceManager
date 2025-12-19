@@ -22,13 +22,6 @@ class Wallet;
 class Category;
 class IncomeSource;
 
-/**
- * @class AppController
- * @brief The central brain of the application.
- *
- * Manages the lifecycle of Wallets, Transactions, and Master Data (Categories/Sources).
- * Acts as the bridge between the UI (M3) and Data Persistence (M1).
- */
 class AppController {
 private:
     // --- UI Messaging ---
