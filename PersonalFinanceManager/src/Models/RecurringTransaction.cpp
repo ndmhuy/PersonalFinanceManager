@@ -12,6 +12,7 @@
 #include "Utils/BinaryFileHelper.h"
 #include <sstream>
 #include <iomanip>
+#include <ctime>
 
 // ==========================================
 // 1. CONSTRUCTORS
@@ -65,13 +66,11 @@ Transaction* RecurringTransaction::GenerateTransaction(std::string newTransId, c
     Transaction* t = nullptr;
     std::string recurringDesc = description + " (Auto)";
     
-    // Factory Logic
     if (type == TransactionType::Income)
         t = new Income(newTransId, walletId, categoryID, amount, dateToCreate, recurringDesc);
     else
         t = new Expense(newTransId, walletId, categoryID, amount, dateToCreate, recurringDesc);
     
-    // Update state so we don't generate this again immediately
     lastGeneratedDate = dateToCreate;
     return t;
 }
@@ -83,13 +82,65 @@ bool RecurringTransaction::ShouldGenerate(const Date& currentDate) {
     // 2. Check Start Date
     if (currentDate < startDate) return false;
     
-    // 3. First time run?
+    // 3. First time run
     if (!lastGeneratedDate.IsValid()) return true;
     
-    // 4. Check if we have already generated one after the last one
-    // Note: A real system needs complex frequency math (NextDueDate calculation).
-    // This simple logic assumes "Run if today > last run".
-    return lastGeneratedDate < currentDate;
+    // 4. CHECK FREQUENCY LOGIC
+    int lastD = lastGeneratedDate.GetDay();
+    int lastM = lastGeneratedDate.GetMonth();
+    int lastY = lastGeneratedDate.GetYear();
+    
+    Date nextDueDate;
+
+    switch (frequency) {
+        case Frequency::Daily:
+            return lastGeneratedDate < currentDate;
+
+        case Frequency::Weekly:
+            break; 
+
+        case Frequency::Monthly:
+            if (lastM == 12) {
+                nextDueDate = Date(lastD, 1, lastY + 1);
+            } else {
+                int nextM = lastM + 1;
+                int maxDayNextMonth = Date::DaysInMonth(nextM, lastY);
+                int nextD = (lastD > maxDayNextMonth) ? maxDayNextMonth : lastD;
+                nextDueDate = Date(nextD, nextM, lastY);
+            }
+            return currentDate >= nextDueDate;
+
+        case Frequency::Yearly:
+            if (lastD == 29 && lastM == 2 && !Date::IsLeapYear(lastY + 1)) {
+                nextDueDate = Date(28, 2, lastY + 1);
+            } else {
+                nextDueDate = Date(lastD, lastM, lastY + 1);
+            }
+            return currentDate >= nextDueDate;
+            
+        default:
+            return false;
+    }
+
+    if (frequency == Frequency::Weekly) {
+        struct tm lastTm = {0};
+        lastTm.tm_year = lastY - 1900;
+        lastTm.tm_mon = lastM - 1;
+        lastTm.tm_mday = lastD;
+        
+        struct tm currTm = {0};
+        currTm.tm_year = currentDate.GetYear() - 1900;
+        currTm.tm_mon = currentDate.GetMonth() - 1;
+        currTm.tm_mday = currentDate.GetDay();
+        
+        time_t lastTime = mktime(&lastTm);
+        time_t currTime = mktime(&currTm);
+        
+        double secondsDiff = difftime(currTime, lastTime);
+        return secondsDiff >= 604800; 
+    }
+
+    return false;
 }
 
 // ==========================================
@@ -112,15 +163,17 @@ std::string RecurringTransaction::ToString() const {
     return ss.str();
 }
 
+// ==========================================
+// 6. SERIALIZATION
+// ==========================================
+
 void RecurringTransaction::ToBinary(std::ofstream& fout) const {
-    // 1. Identity & Schedule
     BinaryFileHelper::WriteString(fout, id);
     BinaryFileHelper::Write<int>(fout, static_cast<int>(frequency));
     BinaryFileHelper::WriteDate(fout, startDate);
     BinaryFileHelper::WriteDate(fout, endDate);
     BinaryFileHelper::WriteDate(fout, lastGeneratedDate);
     
-    // 2.Template Data
     BinaryFileHelper::WriteString(fout, walletId);
     BinaryFileHelper::WriteString(fout, categoryID);
     BinaryFileHelper::Write<double>(fout, amount);
@@ -129,21 +182,18 @@ void RecurringTransaction::ToBinary(std::ofstream& fout) const {
 }
 
 RecurringTransaction* RecurringTransaction::FromBinary(std::ifstream& fin) {
-    // 1. Identity & Schedule
     std::string id = BinaryFileHelper::ReadString(fin);
     Frequency freq = static_cast<Frequency>(BinaryFileHelper::Read<int>(fin));
     Date start = BinaryFileHelper::ReadDate(fin);
     Date end = BinaryFileHelper::ReadDate(fin);
     Date lastGen = BinaryFileHelper::ReadDate(fin);
     
-    // 2. Template Data
     std::string wId = BinaryFileHelper::ReadString(fin);
     std::string catId = BinaryFileHelper::ReadString(fin);
     double amt = BinaryFileHelper::Read<double>(fin);
     TransactionType type = static_cast<TransactionType>(BinaryFileHelper::Read<int>(fin));
     std::string desc = BinaryFileHelper::ReadString(fin);
     
-    // 3. Create Object
     RecurringTransaction* rt = new RecurringTransaction(id, freq, start, end, wId, catId, amt, type, desc);
     rt->SetLastGeneratedDate(lastGen);
     

@@ -7,14 +7,6 @@
 
 class ConsoleView {
 private:
-    // Color constants for consistent UI theming - Windows Console
-    static const int COLOR_SUCCESS = 10;      /// Light Green for success messages
-    static const int COLOR_ERROR = 12;        /// Light Red for error messages
-    static const int COLOR_WARNING = 14;      /// Light Yellow for warnings
-    static const int COLOR_INFO = 11;         /// Light Cyan for info/status
-    static const int COLOR_NORMAL = 7;        /// White for normal text
-    static const int COLOR_HEADER = 9;        /// Light Blue for headers/titles
-
     // Tracks the current cursor row (y) after each print so we can place
     // dynamic elements like the footer directly below content.
     int cursorY = 0;
@@ -24,6 +16,14 @@ private:
     int contentWidth = 80;
 
 public:
+    // Color constants for consistent UI theming - Windows Console
+    static const int COLOR_SUCCESS = 10;      /// Light Green for success messages
+    static const int COLOR_ERROR = 12;        /// Light Red for error messages
+    static const int COLOR_WARNING = 14;      /// Light Yellow for warnings
+    static const int COLOR_INFO = 11;         /// Light Cyan for info/status
+    static const int COLOR_NORMAL = 7;        /// White for normal text
+    static const int COLOR_HEADER = 9;        /// Light Blue for headers/titles
+
     // ===== CONSOLE CONTROL FUNCTIONS =====
     
     /// @brief Moves console cursor to specified position (x, y)
