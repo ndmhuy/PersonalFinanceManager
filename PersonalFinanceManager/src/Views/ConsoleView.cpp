@@ -22,7 +22,9 @@ void ConsoleView::ClearScreen() {
     // Reset internal cursor tracking to top-left and reset measured width
     cursorY = 0;
     contentWidth = 80;
-}
+    // Reset footer baseline
+    lastFooterY = 23;
+} 
 
 void ConsoleView::ResetColor() {
     SetConsoleColor(COLOR_NORMAL);
@@ -95,30 +97,35 @@ void ConsoleView::PrintHeader(string title, int requestedWidth) {
 }
 
 void ConsoleView::PrintFooter(string message) {
-    // Place footer at the line directly below content; ensure a minimum
-    // separator Y so small content still shows footer in expected place.
-    int sepY = (cursorY < 23) ? 23 : cursorY;
-    // Separator width based on content
-    int sepWidth = (contentWidth < 80) ? 80 : contentWidth;
-    PrintLine(0, sepY, sepWidth, '-');
+    // Place separator and footer message below the error line recorded from PrintShortcutFooter
+    int sepY = (lastFooterY >= 23) ? lastFooterY + 3 : 23 + 3;
 
-    // Footer text
+    // Fixed-width footer separator
+    PrintLine(0, sepY, 80, '-');
+
+    // Footer text (fixed width 80)
     MoveToXY(1, sepY + 1);
     SetColor(COLOR_INFO);
     cout << message;
+    // Overwrite any trailing characters from previous messages to keep the line clean
+    if ((int)message.length() < 78) {
+        cout << string(78 - (int)message.length(), ' ');
+    }
     ResetColor();
 
-    // Track message width
-    if ((int)message.length() + 1 > contentWidth) contentWidth = (int)message.length() + 1;
-
-    // Move cursor out of footer
+    // Move cursor out of footer below the message
     cursorY = sepY + 2;
-    MoveToXY(0, cursorY);
+    MoveToXY(0, cursorY); 
 }
 
 void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
     int sepY = (cursorY < 23) ? 23 : cursorY;
-    int sepWidth = (contentWidth < 80) ? 80 : contentWidth;
+
+    // Record baseline so errors and footers can be placed predictably
+    lastFooterY = sepY; 
+
+    // Fixed-width footer: always 80 columns
+    const int sepWidth = 80;
     PrintLine(0, sepY, sepWidth, '-');
 
     // Left part: shortcuts
@@ -133,22 +140,18 @@ void ConsoleView::PrintShortcutFooter(string shortcuts, string status) {
     }
     MoveToXY(statusX, sepY + 1);
     SetColor(COLOR_INFO);
-    cout << status;
-
-    // Track widths
-    if ((int)shortcuts.length() + 1 > contentWidth) contentWidth = (int)shortcuts.length() + 1;
-    if ((int)status.length() + 1 > contentWidth) contentWidth = (int)status.length() + 1;
+    cout << status; 
 
     ResetColor();
     cursorY = sepY + 2;
     MoveToXY(0, cursorY);
-}
+} 
 
 //MESSAGE IMPLEMENTATIONS
 
 void ConsoleView::ShowSuccess(string message) {
     SetColor(COLOR_SUCCESS);
-    std::string out = std::string("[OK] ") + message;
+    std::string out = std::string(" [✓] ") + message;
     cout << out << endl;
     ResetColor();
     // Update cursor tracking since we emitted a newline
@@ -158,16 +161,25 @@ void ConsoleView::ShowSuccess(string message) {
 
 void ConsoleView::ShowError(string message) {
     SetColor(COLOR_ERROR);
-    std::string out = std::string("[ERR] ") + message;
-    cout << out << endl;
+    std::string out = std::string("[✗] ") + message;
+
+    // Place error immediately below the shortcut footer so placement is stable
+    const int sepWidth = 80;
+    int errY = (lastFooterY >= 23) ? (lastFooterY + 2) : (23 + 2);
+
+    // Print at column 1 to keep a small left margin
+    MoveToXY(1, errY);
+    cout << out;
+    // Clear any leftover characters on the line
+    if ((int)out.length() < sepWidth - 2) {
+        cout << string((sepWidth - 2) - (int)out.length(), ' ');
+    }
     ResetColor();
-    cursorY++;
-    if ((int)out.length() > contentWidth) contentWidth = (int)out.length();
 }
 
 void ConsoleView::ShowWarning(string message) {
     SetColor(COLOR_WARNING);
-    std::string out = std::string("[WARN] ") + message;
+    std::string out = std::string(" [!] ") + message;
     cout << out << endl;
     ResetColor();
     cursorY++;
@@ -176,7 +188,7 @@ void ConsoleView::ShowWarning(string message) {
 
 void ConsoleView::ShowInfo(string message) {
     SetColor(COLOR_INFO);
-    std::string out = std::string("[INFO] ") + message;
+    std::string out = std::string(" [i] ") + message;
     cout << out << endl;
     ResetColor();
     cursorY++;

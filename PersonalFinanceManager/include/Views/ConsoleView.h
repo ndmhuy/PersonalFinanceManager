@@ -12,8 +12,12 @@ private:
     int cursorY = 0;
 
     // Tracks the maximum content width printed on the screen since last clear.
-    // Used to adapt header/footer width to match tables. Defaults to 80.
+    // Used to adapt header width to match tables. Defaults to 80.
     int contentWidth = 80;
+
+    // Baseline row used for footer placement. This keeps footer and inline
+    // error messages at predictable rows and prevents drift.
+    int lastFooterY = 23;
 
 public:
     // Color constants for consistent UI theming - Windows Console
