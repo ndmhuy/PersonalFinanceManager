@@ -313,7 +313,7 @@ void AppController::AddTransaction(double amount, std::string walletId, std::str
         if (view) view->ShowError("Wallet ID not found: " + walletId);
         return;
     }
-
+    
     if (type == TransactionType::Expense) {
         if (GetCategoryById(categoryOrSourceId) == nullptr) {
              if (view) view->ShowError("Expense Category not found.");
