@@ -1,0 +1,28 @@
+\section{High-Level Architecture}
+    The system follows a simple layered architecture that keeps presentation, control and business logic separated for clarity and testability:
+    \begin{itemize}
+    \item \textbf{Models} — domain objects such as `Transaction`, `Wallet`, `Category`, `IncomeSource`, and `RecurringTransaction` live in `include/Models` and `src/Models`.
+    \item \textbf{Controllers} — `AppController` implements the business operations (add/edit/delete transactions, wallets, generate reports). `NavigationController` (and the `Nav*` files) implement UI flows and call `AppController` methods.
+    \item \textbf{Views} — the console presentation layer is in `include/Views` / `src/Views` and includes `ConsoleView`, `Menus`, `DashBoard` and `InputValidator` which format output and validate user input.
+    \item \textbf{Persistence and Utilities} — data is serialized using `BinaryFileHelper` and small helpers like `IdGenerator`, `Date`, and `HashMap` support in-memory operations and file storage.
+    \end{itemize}
+    This separation keeps the UI lightweight and makes core logic easier to unit test without requiring console interaction.
+
+    % High-level architecture diagram
+    \begin{center}
+    \begin{tikzpicture}[node distance=8mm, font=\small, auto, >=Stealth]
+        \tikzset{layer/.style={rectangle, draw, rounded corners, align=center, minimum width=86mm, minimum height=8mm, fill=white}}
+
+        \node[layer] (views) {\textbf{Views}\\ConsoleView, Menus, DashBoard, InputValidator};
+        \node[layer, below=of views] (controllers) {\textbf{Controllers}\\NavigationController, AppController (business logic)};
+        \node[layer, below=of controllers] (models) {\textbf{Models}\\Transaction, Wallet, Category, IncomeSource, RecurringTransaction};
+        \node[layer, below=of models] (persistence) {\textbf{Persistence / Utilities}\\BinaryFileHelper, IdGenerator, Date, HashMap};
+
+        \draw[-{Stealth}] (views) -- (controllers);
+        \draw[-{Stealth}] (controllers) -- (models);
+        \draw[-{Stealth}] (models) -- (persistence);
+        \draw[-{Stealth}] (controllers.east) .. controls +(14mm,0) and +(14mm,0) .. (persistence.east) node[midway, right, font=\scriptsize] {save / load};
+    \end{tikzpicture}
+
+    \vspace{1mm}\small\textbf{Figure:} High-level layered architecture (Views → Controllers → Models → Persistence)
+    \end{center}

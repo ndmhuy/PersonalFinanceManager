@@ -11,3 +11,29 @@ This project was engineered under a strict academic constraint: \textbf{No Stand
     \item \textbf{Persistence \& Auto-Save:} A custom binary serialization engine coupled with a \textbf{multi-threaded background worker} that automatically persists data changes to disk, ensuring zero data loss.
     \item \textbf{Cross-Platform Support:} Universal build scripts (\texttt{.bat} and \texttt{.command}) ensuring seamless execution on both Windows and macOS.
 \end{itemize}
+
+\subsection{Objectives}
+The main objectives of the Personal Finance Manager project are:
+\begin{itemize}
+  \item Provide a reliable and easy-to-use command-line interface for tracking personal finances (wallets, incomes, expenses, recurring transactions).
+  \item Ensure data integrity and persistence through robust serialization and safe update/delete semantics (restrict-delete checks and immediate save for critical operations).
+  \item Keep business logic centralized and testable (single `AppController` entry point) and provide small, single-responsibility UI flows for easy validation.
+  \item Support cross-platform execution and reproducible builds so evaluators can run the application on Windows and macOS with minimal setup.
+  \item Produce clear documentation, diagrams and screenshot evidence so graders can verify implemented features quickly.
+\end{itemize}
+
+\subsection{Scope}
+This project is scoped as a single-user, desktop console application. The scope includes:
+\begin{itemize}
+  \item Core features: create/view/edit/delete transactions (income/expense), manage wallets, categories and income sources, recurring transaction automation, and basic reporting (monthly summaries, category breakdowns).
+  \item Presentation: Console UI components (menus, dashboard, tables) and input validation helpers.
+  \item Persistence: Binary serialization for saving/loading state and utilities for file IO.
+  \item Documentation: A report (M3) with diagrams and screenshots; code comments and README for reproducibility.
+\end{itemize}
+
+\paragraph{Out of scope}
+\begin{itemize}
+  \item Multi-user or networked synchronization, central server components, or database-backed services.
+  \item Advanced analytics (forecasting, machine learning) or third-party payment integrations.
+  \item A graphical desktop/mobile UI — the project intentionally targets the console environment.
+\end{itemize}
