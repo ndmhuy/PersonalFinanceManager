@@ -101,10 +101,13 @@ char Menus::DisplayWalletMenu() {
 }
 
 //REPORTS MENU IMPLEMENTATION
+//REPORTS MENU IMPLEMENTATION
 char Menus::DisplayReportsMenu() {
     view.ClearScreen();
     view.PrintHeader(REPORTS_MENU_TITLE);
-    view.PrintBox(8,5,30,6);
+    
+    // Vẽ khung to hơn để chứa đủ 5 dòng
+    view.PrintBox(8, 5, 40, 7); 
 
     view.MoveToXY(10, 6);
     cout << REPORTS_MENU_1 << endl;
@@ -114,10 +117,14 @@ char Menus::DisplayReportsMenu() {
     cout << REPORTS_MENU_3 << endl;
     view.MoveToXY(10, 9);
     cout << REPORTS_MENU_4 << endl;
-
-    view.PrintShortcutFooter("[1-4] Select | [ESC] Back", "Reports Menu");
     
-    return GetKeyPress();
+    // Hiển thị mục số 5
+    view.MoveToXY(10, 10);
+    cout << REPORTS_MENU_5 << endl;
+
+    view.PrintShortcutFooter("[1-5] Select | [ESC] Back", "Reports Menu");
+    
+    return GetKeyPress(); 
 }
 
 //CATEGORY MENU IMPLEMENTATION
@@ -249,6 +256,7 @@ const string Menus::REPORTS_MENU_1 = "1. Monthly Summary";
 const string Menus::REPORTS_MENU_2 = "2. Spending by Category";
 const string Menus::REPORTS_MENU_3 = "3. Income vs Expense";
 const string Menus::REPORTS_MENU_4 = "4. Wallet Balance Overview";
+const string Menus::REPORTS_MENU_5 = "5. Income by Source";
 
 // Add Income Form
 const string Menus::ADD_INCOME_TITLE = "=== ADD INCOME ===";

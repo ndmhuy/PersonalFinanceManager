@@ -72,6 +72,7 @@ private:
     void HandleSpendingByCategory();
     void HandleIncomeVsExpense();
     void HandleWalletBalanceOverview();
+    void HandleIncomeBySource();
 
     // Recurring transaction handlers
     void ShowRecurringFlow();
