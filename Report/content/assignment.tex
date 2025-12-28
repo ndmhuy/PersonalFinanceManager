@@ -1,69 +1,76 @@
 \section{Team Composition \& Task Assignment}
 
-This project was developed by Group 09 under the leadership of \textbf{Nguyễn Đình Minh Huy}. The workload was distributed based on the Model-View-Controller (MVC) architecture, ensuring clear separation of concerns.
+This project was developed by \textbf{Group 09} under the leadership of Nguyễn Đình Minh Huy. The workload was distributed based on the Model-View-Controller (MVC) architecture, ensuring a clear separation of concerns and parallel development.
 
 \subsection{Group Information}
-\noindent
-\begin{tabular}{@{}ll}
-    \textbf{Group ID:} & 09 \\
-    \textbf{Class:} & 25A01 \\
-    \textbf{Leader:} & Nguyễn Đình Minh Huy (25125083) \\
-\end{tabular}
+\begin{tabbing}
+    \hspace{3cm} \= \kill
+    \textbf{Group ID:} \> 09 \\
+    \textbf{Class:}    \> 25A01 \\
+    \textbf{Leader:}   \> Nguyễn Đình Minh Huy (25125083)
+\end{tabbing}
 
 \subsection{Work Division}
-The following table details the specific responsibilities and code contributions of each member. 
-\emph{Note: M1 (Leader) was responsible for the core infrastructure, including all Models, Utilities, and Cross-Platform compatibility.}
+The table below details the specific responsibilities and code contributions of each member.
 
 \begin{table}[h]
     \centering
-    % Compact rows
-    \renewcommand{\arraystretch}{1.2} 
-    \setlength{\tabcolsep}{3pt}      
+    \renewcommand{\arraystretch}{1.5} % Adds breathing room between rows
+    \small % Slightly smaller text for the whole table to fit content better
     
-    \begin{tabular}{|c|c|l|p{6.8cm}|p{3.2cm}|}
-        \hline
-        \textbf{No.} & \textbf{ID} & \textbf{Full Name} & \textbf{Task Assignment (Role)} & \textbf{Files} \\
-        \hline
+    % Define column widths: 
+    % c = center, l = left, p{width} = paragraph (text wrapping)
+    \begin{tabular}{@{} c l p{7cm} p{4.5cm} @{}} 
+        \toprule
+        \textbf{ID} & \textbf{Member} & \textbf{Role \& Responsibilities} & \textbf{Key Files} \\
+        \midrule
         
-        % MEMBER 1: HUY (Updated: Models + Utils + Cross-Platform)
-        1 & 25125083 & Nguyễn Đình Minh Huy & 
+        % MEMBER 1
+        25125083 & 
+        \textbf{Minh Huy} & 
         \textbf{Role: Core \& Data Engineer} \newline
-        \small 
         $\bullet$ \textbf{Core:} Designed custom \texttt{ArrayList} \& \texttt{HashMap} (No STL). \newline
-        $\bullet$ \textbf{Models:} Implemented all Entity classes (\texttt{Transaction}, \texttt{Wallet}, etc.). \newline
-        $\bullet$ \textbf{Infra:} Built Thread-safe Auto-Save \& Binary Serialization. \newline
-        $\bullet$ \textbf{System:} Ensured Cross-Platform (Win/Mac) compatibility. & 
-        \small \texttt{src/Utils/*} \newline \texttt{src/Models/*} \newline \texttt{BinaryHelper.cpp} \\
-        \hline
-
-        % MEMBER 2: LONG (Updated: Logic Only)
-        2 & 25125087 & Lê Trần Hoàng Long & 
+        $\bullet$ \textbf{Models:} Implemented all Entity classes. \newline
+        $\bullet$ \textbf{Infra:} Built Thread-safe Auto-Save \& Serialization. \newline
+        $\bullet$ \textbf{System:} Cross-Platform compatibility. & 
+        \texttt{Utils/*} \newline 
+        \texttt{Models/*} \newline 
+        \texttt{NavSearch} \\
+        \cmidrule(l){1-4} % A light separator line
+        
+        % MEMBER 2
+        25125087 & 
+        \textbf{Hoàng Long} & 
         \textbf{Role: Logic Developer} \newline
-        \small 
         $\bullet$ \textbf{Controller:} Implemented \texttt{AppController} business logic. \newline
-        $\bullet$ \textbf{Algorithms:} Developed filtering algorithms (Lambda predicates). \newline
-        $\bullet$ \textbf{Reporting:} Built Aggregation logic for financial stats. & 
-        \small \texttt{AppController.cpp} \\
-        \hline
-
-        % MEMBER 3: TOAN (Updated: UI Only)
-        3 & 25125091 & Trần Đức Toàn & 
+        $\bullet$ \textbf{Algorithms:} Developed filtering \& sorting. \newline
+        $\bullet$ \textbf{Reporting:} Built aggregation logic. & 
+        \texttt{AppController} \newline 
+        \texttt{UnitTest.cpp} \\
+        \cmidrule(l){1-4}
+        
+        % MEMBER 3
+        25125091 & 
+        \textbf{Đức Toàn} & 
         \textbf{Role: UI/UX Developer} \newline
-        \small 
-        $\bullet$ \textbf{Views:} Designed \texttt{ConsoleView} for tables/menus. \newline
-        $\bullet$ \textbf{Validation:} Implemented \texttt{InputValidator} for robust input. \newline
-        $\bullet$ \textbf{Layout:} Managed Dashboard \& visual components. & 
-        \small \texttt{src/Views/*} \newline \texttt{DashBoard.cpp} \\
-        \hline
+        $\bullet$ \textbf{Views:} Designed \texttt{ConsoleView} \& Tables. \newline
+        $\bullet$ \textbf{Validation:} Implemented \texttt{InputValidator}. \newline
+        $\bullet$ \textbf{Layout:} Managed Dashboard \& Menus. & 
+        \texttt{NavigationController} \newline 
+        \texttt{Views/*} \newline 
+        \texttt{main.cpp} \\
+        
+        \bottomrule
     \end{tabular}
-    \caption{Distribution of responsibilities.}
+    \caption{Detailed breakdown of team responsibilities.}
     \label{tab:task_assignment}
 \end{table}
 
-\subsection{Collaboration Tools}
+\subsection{Collaboration Workflow}
+The team utilized modern collaboration tools to maintain code quality:
 \begin{itemize}
-    \item \textbf{Version Control:} GitHub (Mandatory) - All members contributed via individual commits.
-    \item \textbf{Communication:} Discord/Zalo - Used for daily stand-up meetings and bug tracking.
+    \item \textbf{Version Control:} GitHub was mandatory for all code submissions.
+    \item \textbf{Communication:} Daily stand-up meetings via Messenger for bug tracking.
 \end{itemize}
 
 \pagebreak
