@@ -1,30 +1,35 @@
 @echo off
 title Personal Finance Manager - Launcher
+
+:: 1. Force script to run from its own directory
+cd /d "%~dp0"
+
 echo ==================================================
 echo      BUILDING: PERSONAL FINANCE MANAGER
 echo ==================================================
 
-:: 1. Create Build Directory safely
+:: 2. Create Build Directory
 if not exist build mkdir build
 cd build
 
-:: 2. Configure
+:: 3. Configure
 echo [1/3] Configuring...
 cmake ..
 if %errorlevel% neq 0 (
     echo.
-    echo [ERROR] CMake Failed.
-    echo Please make sure CMake is installed and added to your PATH.
+    echo [ERROR] CMake Configuration Failed.
+    echo 1. Make sure CMake is installed.
+    echo 2. Make sure CMakeLists.txt is in the project root.
     pause
     exit /b
 )
 
-:: 3. Compile
+:: 4. Compile
 echo [2/3] Compiling...
 cmake --build . --config Release
 if %errorlevel% neq 0 (
     echo.
-    echo [ERROR] Compilation Failed. Check your code for errors.
+    echo [ERROR] Compilation Failed. Check your code errors above.
     pause
     exit /b
 )
@@ -32,33 +37,31 @@ if %errorlevel% neq 0 (
 echo [3/3] Launching App...
 echo ==================================================
 
-:: 4. SMART LAUNCHER (Finds the .exe wherever it is)
+:: 5. SMART LAUNCHER (Handles VS and MinGW layouts)
 
-:: CASE A: Visual Studio Style (Inside Release folder)
+:: Case A: Visual Studio (Release subfolder)
 if exist "Release\PersonalFinanceManager.exe" (
     cd Release
     PersonalFinanceManager.exe
     goto :end
 )
 
-:: CASE B: MinGW / Standard Style (Directly in build folder)
+:: Case B: MinGW / Standard (Root build folder)
 if exist "PersonalFinanceManager.exe" (
     PersonalFinanceManager.exe
     goto :end
 )
 
-:: CASE C: Debug Folder (Fallback)
+:: Case C: Debug subfolder (Just in case)
 if exist "Debug\PersonalFinanceManager.exe" (
-    echo [WARNING] Running Debug version...
     cd Debug
     PersonalFinanceManager.exe
     goto :end
 )
 
-:: ERROR: File not found
 echo.
-echo [ERROR] Build successful, but cannot find PersonalFinanceManager.exe.
-echo Check the 'build' folder to see where it went.
+echo [ERROR] Build succeeded, but cannot find the executable.
+echo Look inside the 'build' folder to find 'PersonalFinanceManager.exe'.
 
 :end
 pause
