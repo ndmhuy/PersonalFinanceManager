@@ -1,0 +1,172 @@
+\section{Quality Assurance and Systematic Testing}
+
+\subsection{Overview and Testing Philosophy}
+
+This section describes the quality assurance approach and testing process used for the AppController module. The system is implemented using a fully custom architecture without relying on STL containers or smart pointers. Therefore, testing was not limited to checking whether features work correctly, but also focused on data consistency, algorithm correctness, thread safety, and manual memory management.
+
+Instead of using a single testing technique, multiple testing strategies were applied. This allows the system to be evaluated both at the logic level and under realistic usage scenarios, including edge cases and high-load conditions.
+
+\subsection{Core Testing Strategies}
+
+\subsubsection{Boundary Value Analysis (BVA)}
+
+Boundary Value Analysis was used to examine system behavior at the limits of valid input ranges, where errors are more likely to occur. The tested scenarios included:
+\begin{itemize}
+    \item transactions with zero value,
+    \item negative monetary inputs,
+    \item high-frequency identifier generation,
+    \item date-related edge cases such as leap-year dates (February 29).
+\end{itemize}
+
+These tests helped ensure that financial calculations, date processing logic, and input validation behave consistently and safely under boundary conditions.
+
+\subsubsection{Stress and Scalability Testing}
+
+To evaluate scalability, the system was tested with large datasets containing thousands of transactions. The goals of this testing phase were:
+\begin{itemize}
+    \item to verify the stability of the custom \texttt{ArrayList} structure,
+    \item to confirm that indexed queries maintain the expected
+    $O(\log N + K)$ performance,
+    \item to ensure that overall performance does not degrade significantly as data size increases.
+\end{itemize}
+
+\subsubsection{State Transition Testing}
+
+State Transition Testing was performed to ensure that a single user action correctly updates all related system states.
+
+For example, when a new transaction is added, the system must:
+\begin{enumerate}
+    \item update the in-memory transaction list,
+    \item update the corresponding wallet balance,
+    \item save the updated data to disk using the binary storage mechanism.
+\end{enumerate}
+
+This testing approach ensures consistency between in-memory data and persistent storage.
+
+\subsubsection{Concurrency and Synchronization Testing}
+
+Because the application uses a background Auto-save thread, concurrency testing was conducted to detect race conditions and synchronization issues. The system was tested under conditions involving:
+\begin{itemize}
+    \item frequent read and write operations,
+    \item rapid user navigation between screens,
+    \item simultaneous background data saving.
+\end{itemize}
+
+The use of \texttt{std::recursive\_mutex} was confirmed to correctly protect shared resources, preventing data corruption and application freezes.
+
+\subsubsection{Manual Memory Profiling}
+
+Since the system does not use smart pointers or STL containers, memory management was tested manually through repeated \textit{Load--Stress--Exit} cycles. These tests focused on:
+\begin{itemize}
+    \item proper execution of destructors,
+    \item correct behavior of the custom FreeList utility,
+    \item full release of dynamically allocated memory.
+\end{itemize}
+
+\section{Detailed Functional and Logical Test Cases}
+
+This section presents specific test cases used to verify the correctness of the AppController, with emphasis on financial accuracy, data safety, and stability in abnormal situations.
+
+\subsection{Financial State and Boundary Testing}
+
+\subsubsection{Negative Value Injection}
+
+\textbf{Action.} An expense transaction with a value of \(-500{,}000\) VNĐ was entered.
+
+\textbf{Logic Tested.} Input validation and value normalization during transaction creation.
+
+\textbf{Expected Result.} The system rejects the negative value or converts it into a valid expense, preventing incorrect balance updates.
+
+\textbf{Actual Result.} \textbf{Passed.} The system enforced positive-only values and maintained correct wallet balance.
+
+\subsubsection{Zero-Value Transaction}
+
+\textbf{Action.} An income transaction with a value of \(0\) VNĐ was recorded.
+
+\textbf{Expected Result.} The transaction is stored for record purposes, and the wallet balance remains unchanged.
+
+\textbf{Actual Result.} \textbf{Passed.} The transaction was recorded correctly without affecting the balance.
+
+\subsubsection{Leap-Year Recurring Transaction}
+
+\textbf{Action.} A daily recurring transaction was configured, and the system date was set to February 29.
+
+\textbf{Logic Tested.} Handling of leap-year dates in recurring transaction logic.
+
+\textbf{Expected Result.} The transaction is generated correctly on the leap day.
+
+\textbf{Actual Result.} \textbf{Passed.} The system handled the leap-year case correctly.
+
+\subsection{Referential Integrity and Data Safety}
+
+\subsubsection{Protection of Linked Master Data}
+
+\textbf{Action.} An attempt was made to delete a wallet that contained 50 existing transactions.
+
+\textbf{Expected Result.} The deletion is blocked to prevent data inconsistency.
+
+\textbf{Actual Result.} \textbf{Passed.} The system correctly prevented deletion and preserved data relationships.
+
+\subsubsection{Identifier Collision Resilience}
+
+\textbf{Action.} 1,000 categories were created in a short time period.
+
+\textbf{Logic Tested.} Identifier uniqueness and HashMap collision handling.
+
+\textbf{Expected Result.} Each category receives a unique identifier with no data overwritten.
+
+\textbf{Actual Result.} \textbf{Passed.} Collision handling worked correctly and no identifiers were duplicated.
+
+\section{UI Robustness, Performance, and Reliability Testing}
+
+\subsection{User Interface Stability}
+
+\subsubsection{Rapid Navigation under Concurrent Persistence}
+
+\textbf{Action.} The user rapidly switched between screens while the Auto-save thread was running.
+
+\textbf{Expected Result.} The interface remains responsive with no deadlocks.
+
+\textbf{Actual Result.} \textbf{Passed.} Proper synchronization ensured smooth operation.
+
+\subsubsection{Special Character and Long String Input}
+
+\textbf{Action.} Long text strings and emojis were entered into transaction descriptions.
+
+\textbf{Expected Result.} The system handles input safely without memory errors.
+
+\textbf{Actual Result.} \textbf{Passed.} The input was processed correctly without crashes or corruption.
+
+\subsection{Performance Evaluation}
+
+\subsubsection{Large Dataset Retrieval}
+
+\textbf{Action.} A date-range query was executed on a dataset of 10,000 transactions.
+
+\textbf{Expected Result.} Results are returned quickly using binary search indexing.
+
+\textbf{Actual Result.} \textbf{Passed.} The query completed efficiently with noticeable performance improvement over linear search.
+
+\subsection{Reliability and Crash Recovery}
+
+\subsubsection{Abrupt Process Termination}
+
+\textbf{Action.} The application was forcefully closed immediately after adding a transaction.
+
+\textbf{Expected Result.} The transaction data is preserved after restarting the application.
+
+\textbf{Actual Result.} \textbf{Passed.} The data was successfully recovered from persistent storage.
+
+\subsubsection{Full Lifecycle Memory Cleanup}
+
+\textbf{Action.} 500 add and delete operations were performed before exiting the program.
+
+\textbf{Expected Result.} All allocated memory is released on program termination.
+
+\textbf{Actual Result.} \textbf{Passed.} Manual checks reported no memory leaks.
+
+\section{Conclusion}
+
+The testing results show that the AppController functions correctly and remains stable under various conditions, even without using STL containers.
+
+Through systematic testing, the system demonstrated reliable behavior in terms of financial accuracy, concurrency handling, and memory management. This confirms that a carefully designed custom implementation can achieve acceptable reliability and performance for practical use.
