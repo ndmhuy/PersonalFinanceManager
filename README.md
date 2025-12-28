@@ -3,7 +3,7 @@
 A simple console-based personal finance manager written in C++.
 
 - **Purpose:** Track wallets, incomes, expenses and recurring transactions via a clear, testable command-line UI.  
-- **Status:** Student project (Milestone M3: UI & Controllers implemented).
+- **Status:** In progress — core features implemented (Models, Views, Controllers); report (M3) drafted and diagrams prepared; remaining work: unit tests, automated screenshot capture, smoke tests, and minor UI polish.
 
 ---
 
