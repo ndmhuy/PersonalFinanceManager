@@ -1,23 +1,27 @@
 cmake_minimum_required(VERSION 3.10)
-project(PersonalFinanceManager)
 
+# 1. Project Name
+project(PersonalFinanceManager VERSION 1.0)
+
+# 2. Standard Setup
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# 3. Source & Include
 include_directories(include)
-
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-file(GLOB_RECURSE HEADERS "include/*.h")
+find_package(Threads REQUIRED)
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
+# 4. Create Executable
+add_executable(PersonalFinanceManager ${SOURCES})
+target_link_libraries(PersonalFinanceManager Threads::Threads)
 
-add_executable(PFM ${SOURCES} ${HEADERS})
+# 5. Auto-Copy Assets
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/data")
+    message(STATUS "First time setup: Copying default data folder...")
+    file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION "${CMAKE_BINARY_DIR}")
+else()
+    message(STATUS "Data folder already exists in build. Skipping copy to preserve your changes.")
+endif()
 
-set(DATA_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/data")
-set(DATA_DEST "${CMAKE_CURRENT_BINARY_DIR}/data")
-
-add_custom_command(TARGET PFM POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${DATA_SOURCE}
-    ${DATA_DEST}
-    COMMENT "Copying data folder to build directory..."
-)
+message(STATUS "Build setup ready for: ${PROJECT_NAME}")
