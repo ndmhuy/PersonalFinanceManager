@@ -83,6 +83,7 @@ public:
     static const std::string REPORTS_MENU_2;
     static const std::string REPORTS_MENU_3;
     static const std::string REPORTS_MENU_4;
+    static const std::string REPORTS_MENU_5;
     
     // Add Income Form
     static const std::string ADD_INCOME_TITLE;

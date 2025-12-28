@@ -19,6 +19,7 @@
 #include "Utils/Enums.h"
 #include "Views/ConsoleView.h"
 
+// Forward Declarations
 class Transaction;
 class RecurringTransaction;
 class Wallet;
@@ -27,7 +28,7 @@ class IncomeSource;
 
 class AppController {
 private:
-    // Threading components
+    // --- THREADING ---
     std::recursive_mutex dataMutex;
     std::thread autoSaveThread;
     std::atomic<bool> stopAutoSave;
@@ -35,44 +36,34 @@ private:
     void AutoSaveWorker();
     void ShowAutoSaveIndicator();
     
-    // --- UI Messaging ---
+    // --- UI MESSAGING ---
     ConsoleView* view;
 
-    // --- Data Storage (The "Database") ---
+    // --- DATA STORAGE ---
     ArrayList<Transaction*>* transactions;
     ArrayList<RecurringTransaction*>* recurringTransactions;
+    ArrayList<Wallet*>* walletsList;
+    ArrayList<Category*>* categoriesList;
+    ArrayList<IncomeSource*>* incomeSourcesList;
 
-    // --- Fast Lookups (Indices) ---
+    // --- ID MAPS (O(1) Lookup) ---
     HashMap<std::string, Wallet*>* walletsMap;
     HashMap<std::string, Category*>* categoriesMap;
     HashMap<std::string, IncomeSource*>* incomeSourcesMap;
     HashMap<std::string, Transaction*>* transactionsMap;
     HashMap<std::string, RecurringTransaction*>* recurringTransactionsMap;
 
-    // --- Iteration Lists (For UI Menus) ---
-    ArrayList<Wallet*>* walletsList;
-    ArrayList<Category*>* categoriesList;
-    ArrayList<IncomeSource*>* incomeSourcesList;
-
-    // --- [OPTIMIZATION] Indexing (Cache transaction lists by ID) ---
-    // Key: WalletID -> Value: List of Transactions in that wallet
+    // --- FAST INDICES (Mục lục tra cứu nhanh) ---
+    // Key: ID -> Value: List of Transactions
     HashMap<std::string, ArrayList<Transaction*>*>* walletIndex;
-    
-    // Key: CategoryID -> Value: List of Transactions in that category
     HashMap<std::string, ArrayList<Transaction*>*>* categoryIndex;
-    HashMap<std::string, ArrayList<Transaction*>*>* incomeSourceIndex;
+    HashMap<std::string, ArrayList<Transaction*>*>* incomeSourceIndex; // [MỚI] Index cho Income Source
 
-    // Helper functions to keep indices in sync
+    // --- HELPERS ---
     void AddTransactionToIndex(Transaction* t);
     void RemoveTransactionFromIndex(Transaction* t);
-    
-    /**
-     * @brief Internal check to generate automatic transactions.
-     * Called automatically during initialization.
-     */
-    void ProcessRecurringTransactions();
-public:
 
+public:
     // 1. CONSTRUCTOR & DESTRUCTOR
     AppController(ConsoleView* v);
     ~AppController();
@@ -80,62 +71,62 @@ public:
     // 2. DATA PERSISTENCE
     void SaveData(bool silent = false);
     void LoadData();
+    void ClearDatabase();
 
-    // 3. WALLET LOGIC
+    // 3. WALLET MANAGEMENT
     void AddWallet(const std::string& name, double initialBalance);
     Wallet* GetWalletById(const std::string& id);
-    ArrayList<Wallet*>* GetWalletsList() const { return walletsList; }
-    double GetTotalBalance() const;
-    
-    // --- [NEW] WALLET CRUD ---
     void EditWallet(const std::string& id, const std::string& newName);
     bool DeleteWallet(const std::string& id);
+    
+    ArrayList<Wallet*>* GetWalletsList() const { return walletsList; }
+    double GetTotalBalance() const;
 
-    // 4. MASTER DATA (CATEGORIES & SOURCES)
+    // 4. CATEGORY MANAGEMENT
     void AddCategory(const std::string& name);
     Category* GetCategoryById(const std::string& id);
-    ArrayList<Category*>* GetCategoriesList() const { return categoriesList; }
-    
-    // --- [NEW] CATEGORY CRUD ---
     void EditCategory(const std::string& id, const std::string& newName);
     bool DeleteCategory(const std::string& id);
+    
+    ArrayList<Category*>* GetCategoriesList() const { return categoriesList; }
 
+    // 5. INCOME SOURCE MANAGEMENT
     void AddIncomeSource(const std::string& name);
     IncomeSource* GetIncomeSourceById(const std::string& id);
-    ArrayList<IncomeSource*>* GetIncomeSourcesList() const { return incomeSourcesList; }
-    
-    // --- [NEW] INCOME SOURCE CRUD ---
     void EditIncomeSource(const std::string& id, const std::string& newName);
     bool DeleteIncomeSource(const std::string& id);
+    
+    ArrayList<IncomeSource*>* GetIncomeSourcesList() const { return incomeSourcesList; }
 
-    // 5. TRANSACTION CORE LOGIC
+    // 6. TRANSACTION CORE LOGIC
     void AddTransaction(double amount, std::string walletId, std::string categoryOrSourceId, TransactionType type, Date date, std::string description);
     bool DeleteTransaction(const std::string& transactionId);
-    
-    // --- [NEW] TRANSACTION EDIT ---
     bool EditTransaction(const std::string& id, double newAmount, Date newDate, std::string newDesc);
-
-    ArrayList<Transaction*>* GetTransactions() const { return transactions; }
     
-    // 6. AUTOMATION & REPORTING
+    ArrayList<Transaction*>* GetTransactions() const { return transactions; }
+
+    // 7. AUTOMATION (Recurring)
     void AddRecurringTransaction(Frequency freq, Date startDate, Date endDate, std::string walletId, std::string categoryId, double amount, TransactionType type, std::string desc);
-    ArrayList<RecurringTransaction*>* GetRecurringList() const { return recurringTransactions; }
-    RecurringTransaction* GetRecurringById(const std::string& id);
     bool DeleteRecurringTransaction(const std::string& id);
     void EditRecurringTransaction(const std::string& id, Frequency freq, Date startDate, Date endDate, std::string walletId, std::string categoryId, double amount, TransactionType type, std::string desc);
+    
+    void ProcessRecurringTransactions(); // Đã chuyển sang Public
+    ArrayList<RecurringTransaction*>* GetRecurringList() const { return recurringTransactions; }
+    RecurringTransaction* GetRecurringById(const std::string& id);
 
-    // --- FILTERS & STATISTICS ---
+    // 8. FILTERS & STATISTICS
     ArrayList<Transaction*>* GetTransactionsByDateRange(Date start, Date end);
     ArrayList<Transaction*>* GetTransactionsByType(TransactionType type);
     
-    // --- [NEW] ADVANCED FILTERS (For Statistics Engine) ---
+    // --- ADVANCED FILTERS ---
     ArrayList<Transaction*>* GetTransactionsByAmountRange(double minAmount, double maxAmount);
     ArrayList<Transaction*>* GetTransactionsByWallet(const std::string& walletId);
     ArrayList<Transaction*>* GetTransactionsByCategory(const std::string& categoryId);
+    
+    // [QUAN TRỌNG] Hàm này phục vụ cho NavReport phần Income By Source
     ArrayList<Transaction*>* GetTransactionsByIncomeSource(const std::string& sourceId);
+    
     ArrayList<Transaction*>* SearchTransactions(const std::string& keyword);
-
-    void ClearDatabase();
 };
 
 #endif // !AppController_h
