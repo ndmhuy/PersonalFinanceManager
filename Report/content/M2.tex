@@ -8,7 +8,7 @@ This report provides an in-depth technical analysis of the \texttt{AppController
 
 \subsection{Architectural Design and System Role}
 
-\subsubsection{ The Centralized Control Pattern}
+\subsubsection{The Centralized Control Pattern}
 The application adopts a strict separation of concerns. While the Views (\texttt{Nav*.cpp}) are responsible solely for presentation and user input capture, and the Models (\texttt{Transaction.h}, \texttt{Wallet.h}) serve as data structures, the \texttt{AppController} encapsulates the entire \textbf{Business Logic Layer}.
 
 This centralization offers several strategic advantages:
@@ -20,8 +20,7 @@ This centralization offers several strategic advantages:
 
 \begin{figure}[H]
     \centering
-    % [INSERT SCREENSHOT HERE: Chụp file AppController.h phần khai báo class để thấy nó chứa tất cả các list]
-    \includegraphics[width=0.95\linewidth]{img/appcontroller_header.png} 
+    \includegraphics[width=0.95\linewidth]{img/app_header.png} 
     \caption{The AppController Class Definition: The Central Nervous System of the Application}
     \label{fig:appcontroller_header}
 \end{figure}
@@ -50,8 +49,7 @@ When the application terminates, the destructor iterates through every \texttt{A
 
 \begin{figure}[H]
     \centering
-    % [INSERT SCREENSHOT HERE: Chụp hàm Destructor ~AppController() và hàm FreeList]
-    \includegraphics[width=0.9\linewidth]{img/code_destructor.png} 
+    \includegraphics[width=0.9\linewidth]{img/destructor.png} 
     \caption{Implementation of the Destructor ensuring Zero Memory Leaks}
     \label{fig:destructor_impl}
 \end{figure}
@@ -84,8 +82,7 @@ The algorithm follows a three-step process:
 
 \begin{figure}[H]
     \centering
-    % [INSERT SCREENSHOT HERE: Chụp hàm GetTransactionsByDateRange hoặc đoạn code lọc trong NavReport]
-    \includegraphics[width=0.9\linewidth]{img/code_filtering_logic.png} 
+    \includegraphics[width=0.9\linewidth]{img/filtering.png} 
     \caption{Implementation of the Date-Range Filtering Algorithm}
     \label{fig:filtering_logic}
 \end{figure}
@@ -101,10 +98,8 @@ When a search query is executed:
 \begin{enumerate}
     \item The system filters transactions where the description contains the keyword (using a case-insensitive substring search).
     \item \textbf{Data Mapping:} Instead of returning the raw result, the controller uses the stored \texttt{WalletID} and \texttt{CategoryID} to perform an $\mathcal{O}(1)$ lookup in the respective HashMaps.
-    \item \textbf{Result Enrichment:} The retrieved human-readable names (e.g., "Cash Wallet", "Food & Beverage") are then combined with the transaction data for display.
+    \item \textbf{Result Enrichment:} The retrieved human-readable names (e.g., "Cash Wallet", "Food \& Beverage") are then combined with the transaction data for display.
 \end{enumerate}
-
-This architectural decision transforms a cryptic output (e.g., \texttt{WAL-01 | CAT-05}) into meaningful information, significantly improving the application's usability.
 
 \subsection{Automated Recurring Transaction Engine}
 
@@ -136,8 +131,7 @@ The use of a \texttt{While} loop (line 3) instead of a simple \texttt{If} statem
 
 \begin{figure}[H]
     \centering
-    % [INSERT SCREENSHOT HERE: Chụp hàm ProcessRecurringTransactions trong AppController.cpp]
-    \includegraphics[width=0.9\linewidth]{img/code_recurring_automation.png} 
+    \includegraphics[width=0.9\linewidth]{img/recurring.png} 
     \caption{The Catch-up Algorithm for Recurring Transactions}
     \label{fig:recurring_algo}
 \end{figure}
@@ -182,12 +176,9 @@ I implemented a strict dependency check algorithm within the \texttt{DeleteCateg
 \end{algorithmic}
 \end{algorithm}
 
-This algorithm guarantees that no entity can be removed if it is currently "in use," thereby preserving the absolute consistency of the binary database.
-
 \begin{figure}[H]
     \centering
-    % [INSERT SCREENSHOT HERE: Chụp code hàm DeleteCategory hoặc DeleteWallet trong AppController.cpp]
-    \includegraphics[width=0.9\linewidth]{img/code_restrict_delete.png} 
+    \includegraphics[width=0.9\linewidth]{img/restrict_delete.png} 
     \caption{C++ Implementation of the Restrict-Delete Safety Check}
     \label{fig:restrict_delete_impl}
 \end{figure}
@@ -218,10 +209,8 @@ The design and implementation of the \texttt{AppController} successfully meet al
 \subsection{Performance Analysis}
 With the current use of `ArrayList` and linear scanning, the time complexity for most operations is $\mathcal{O}(N)$.
 \begin{itemize}
-    \item \textbf{Memory Efficiency:} Excellent. By manually managing pointers and avoiding STL overhead, the application maintains a minimal memory footprint (estimated $<10$MB for typical usage).
-    \item \textbf{Execution Speed:} For a personal finance dataset (typically $<10,000$ records), linear scan operations are instantaneous (microseconds). The $\mathcal{O}(N)$ approach is practically efficient and avoids the code complexity of implementing B-Trees or Hash Maps for sorting.
+    \item \textbf{Memory Efficiency:} Excellent. By manually managing pointers and avoiding STL overhead, the application maintains a minimal memory footprint.
+    \item \textbf{Execution Speed:} For a personal finance dataset (typically $<10,000$ records), linear scan operations are instantaneous.
 \end{itemize}
 
 In conclusion, the \texttt{AppController} stands as a robust, safe, and efficient backbone for the application, demonstrating a deep understanding of memory management and system architecture in C++.
-
-% End of Report

@@ -54,7 +54,6 @@ private:
     HashMap<std::string, RecurringTransaction*>* recurringTransactionsMap;
 
     // --- FAST INDICES  ---
-    // Key: ID -> Value: List of Transactions
     HashMap<std::string, ArrayList<Transaction*>*>* walletIndex;
     HashMap<std::string, ArrayList<Transaction*>*>* categoryIndex;
     HashMap<std::string, ArrayList<Transaction*>*>* incomeSourceIndex; // [MỚI] Index cho Income Source

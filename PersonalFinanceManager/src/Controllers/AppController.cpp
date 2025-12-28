@@ -503,7 +503,7 @@ void AppController::ProcessRecurringTransactions() {
                 newTransId = IdGenerator::GenerateId(prefix);
             } while (transactionsMap->ContainsKey(newTransId));
             
-            Transaction* autoTrans = rt->GenerateTransaction(newTransId, dueDate); // Set last gen date inside
+            Transaction* autoTrans = rt->GenerateTransaction(newTransId, dueDate); 
             
             size_t pos = GetSortedInsertIndex(transactions, autoTrans->GetDate());
             transactions->Insert(pos, autoTrans);
@@ -517,7 +517,8 @@ void AppController::ProcessRecurringTransactions() {
             }
             
             ++generatedCount;
-            if (view) view->ShowSuccess("Generated: " + rt->GetDescription() + " (" + std::to_string(static_cast<long long>(rt->GetAmount())) + ")");
+            if (view) view->ShowSuccess("Generated: " + rt->GetDescription() + 
+                            " (" + std::to_string(static_cast<long long>(rt->GetAmount())) + ")");
         }
     }
 
