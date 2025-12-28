@@ -116,6 +116,7 @@ public:
     static const std::string SEARCH_MENU_3;
     static const std::string SEARCH_MENU_4;
     static const std::string SEARCH_MENU_5;
+    static const std::string SEARCH_MENU_6;
 };
 
 #endif // !Menus_h

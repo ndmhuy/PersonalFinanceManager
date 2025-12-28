@@ -56,11 +56,24 @@ void NavigationController::ShowSearchFlow() {
         if (c == 27) break;
 
         switch (c) {
-            case '1': HandleSearchByKeyword(); break;
-            case '2': HandleFilterByWallet(); break;
-            case '3': HandleFilterByCategory(); break;
-            case '4': HandleFilterBySource(); break;
-            case '5': HandleFilterByAmount(); break;
+            case '1':
+                HandleSearchByKeyword();
+                break;
+            case '2':
+                HandleFilterByWallet();
+                break;
+            case '3':
+                HandleFilterByCategory();
+                break;
+            case '4':
+                HandleFilterBySource();
+                break;
+            case '5':
+                HandleFilterByAmount();
+                break;
+            case '6':
+                HandleFilterByDate();
+                break;
             default:
                 view.ShowError("Invalid selection.");
                 PauseWithMessage("Press any key to continue...");
@@ -207,6 +220,30 @@ void NavigationController::HandleFilterByAmount() {
     ArrayList<Transaction*>* results = appController->GetTransactionsByAmountRange(min, max);
     PrintTransactionList(results);
     
-    delete results; // Clean up
+    delete results;
+    PauseWithMessage("Press any key to continue...");
+}
+
+// FILTER BY DATE RANGE
+void NavigationController::HandleFilterByDate() {
+    view.ClearScreen();
+    view.PrintHeader("FILTER BY DATE RANGE");
+
+    Date start = InputValidator::GetValidDate("Enter Start Date (YYYY-MM-DD) or 'T' for today: ");
+    Date end   = InputValidator::GetValidDate("Enter End Date (YYYY-MM-DD) or 'T' for today: ");
+
+    if (start > end) {
+        view.ShowError("Start Date cannot be after End Date.");
+        PauseWithMessage("Press any key to retry...");
+        return;
+    }
+
+    view.ClearScreen();
+    view.PrintHeader("TRANSACTIONS: " + start.ToString() + " - " + end.ToString());
+    
+    ArrayList<Transaction*>* results = appController->GetTransactionsByDateRange(start, end);
+    PrintTransactionList(results);
+    
+    delete results;
     PauseWithMessage("Press any key to continue...");
 }

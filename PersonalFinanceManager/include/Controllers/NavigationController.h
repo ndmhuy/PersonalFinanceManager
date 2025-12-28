@@ -87,6 +87,7 @@ private:
     void HandleFilterByCategory();
     void HandleFilterBySource();
     void HandleFilterByAmount();
+    void HandleFilterByDate();
     void PrintTransactionList(ArrayList<Transaction*>* list);
     
     // Clear data handlers

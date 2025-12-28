@@ -181,7 +181,7 @@ char Menus::DisplayRecurringMenu() {
 char Menus::DisplaySearchMenu() {
     view.ClearScreen();
     view.PrintHeader(SEARCH_MENU_TITLE);
-    view.PrintBox(8, 5, 40, 7);
+    view.PrintBox(8, 5, 40, 8);
 
     view.MoveToXY(10, 6);
     cout << SEARCH_MENU_1 << endl;
@@ -193,8 +193,10 @@ char Menus::DisplaySearchMenu() {
     cout << SEARCH_MENU_4 << endl;
     view.MoveToXY(10, 10);
     cout << SEARCH_MENU_5 << endl;
+    view.MoveToXY(10, 11);
+    cout << SEARCH_MENU_6 << endl;
 
-    view.PrintShortcutFooter("[1-5] Select | [ESC] Back", "Search Menu");
+    view.PrintShortcutFooter("[1-6] Select | [ESC] Back", "Search Menu");
     
     return GetKeyPress();
 }
@@ -277,3 +279,4 @@ const string Menus::SEARCH_MENU_2 = "2. Filter by Wallet";
 const string Menus::SEARCH_MENU_3 = "3. Filter by Category";
 const string Menus::SEARCH_MENU_4 = "4. Filter by Income Source";
 const string Menus::SEARCH_MENU_5 = "5. Filter by Amount Range";
+const string Menus::SEARCH_MENU_6 = "6. Filter by Date Range";
