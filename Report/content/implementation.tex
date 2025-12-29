@@ -1,6 +1,26 @@
 \section{System Implementation Details}
 
-This section details the implementation of the core application logic, focusing on data modeling, utilities, and the AI handling.
+This section details the implementation of the core data structures, data modeling, application logic, utilities, and the UI handling.
+
+\subsection{Custom Data Structures (No STL)}
+We engineered two core generic container classes. These structures manage their own memory manually, replacing `std::vector` and `std::unordered\_map`.
+
+\subsubsection{Dynamic Array (\texttt{ArrayList<T>})}
+We implemented a template-based dynamic array to serve as the primary linear container for the application.
+\begin{itemize}
+    \item \textbf{Memory Strategy:} The class maintains a raw pointer \texttt{T* data} and a \texttt{capacity} counter.
+    \item \textbf{Geometric Expansion:} When the array becomes full, the system allocates a new block of memory sized $2 \times \text{current\_capacity}$. It then copies existing elements to the new block and frees the old memory. This ensures the nature of an array.
+    \item \textbf{Safety:} The class implements a RAII-compliant destructor that automatically invokes \texttt{delete[]} on the internal array, ensuring no memory leaks occur when the controller goes out of scope.
+\end{itemize}
+
+\subsubsection{Hash Map (\texttt{HashMap<K, V>})}
+To support "Fast-indexing" (e.g., retrieving a Wallet by its ID) and high-performance "Secondary Indexing" (e.g., filtering transactions by Wallet ID), we implemented a custom Hash Table.
+
+\begin{itemize}
+    \item \textbf{Hashing Strategy:} We implemented the \textbf{djb2 algorithm} \cite{djb2} (created by Dan Bernstein) to map string keys to integer indices. This function initializes a hash value to 5381 and iterates through the string, updating the value using bitwise operations (`hash * 33 + char`). This approach is computationally efficient and generates a high-entropy distribution for ASCII strings (like our UUIDs).
+    \item \textbf{Collision Resolution:} We utilized the \textbf{Separate Chaining} technique. Each "bucket" in the hash table points to a linked list of nodes. If two distinct keys hash to the same index, the new entry is safely appended to the chain.
+    \item \textbf{Performance:} This reduces lookup complexity from $O(N)$ (linear scan) to $O(1)$ (average case), which is essential for keeping the application responsive as the dataset grows.
+\end{itemize}
 
 \subsection{Utilities: ID Generation}
 To ensure referential integrity across the system without relying on fragile memory pointers, every entity (Transaction, Wallet, Category, etc) is assigned a unique string identifier.
