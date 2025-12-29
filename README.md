@@ -17,7 +17,7 @@ PersonalFinanceManager/
   ├─ src/               # source files (implementations)
   ├─ data/              # sample and runtime data
   ├─ Report/            # LaTeX report and images
-  │   ├─ content/       # sections (including M3.tex)
+  │   ├─ content/       # sections
   │   └─ img/           # images / screenshots
   ├─ CMakeLists.txt
   ├─ makefile
@@ -69,7 +69,7 @@ cmake --build . --config Release
 
 ---
 
-##  Github link
+## 🔗 Github link
 - Github link: https://github.com/ndmhuy/PersonalFinanceManager
 
 ---
