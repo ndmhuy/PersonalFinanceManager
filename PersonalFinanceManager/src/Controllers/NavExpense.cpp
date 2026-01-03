@@ -416,6 +416,7 @@ void NavigationController::HandleDeleteCategory() {
     view.PrintText("");
     if (ch != 'y' && ch != 'Y') { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
 
-    appController->DeleteCategory(target->GetId());
+    if (!appController->DeleteCategory(target->GetId()))
+        view.ShowError("Deletion denied: Existing transactions depend on this category.");
     PauseWithMessage("Press any key to continue...");
 }

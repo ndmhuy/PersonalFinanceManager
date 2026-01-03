@@ -427,6 +427,7 @@ void NavigationController::HandleDeleteSource() {
     view.PrintText("");
     if (ch != 'y' && ch != 'Y') { view.ShowInfo("Deletion cancelled."); PauseWithMessage("Press any key to continue..."); return; }
 
-    appController->DeleteIncomeSource(target->GetId());
+    if (!appController->DeleteIncomeSource(target->GetId()))
+        view.ShowError("Deletion denied: Existing transactions depend on this income source.");
     PauseWithMessage("Press any key to continue...");
 }

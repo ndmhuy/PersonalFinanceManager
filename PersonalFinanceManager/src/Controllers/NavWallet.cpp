@@ -122,6 +122,7 @@ void NavigationController::HandleDeleteWallet() {
         return;
     }
 
-    appController->DeleteWallet(target->GetId());
+    if (!appController->DeleteWallet(target->GetId()))
+        view.ShowError("Deletion denied: Existing transactions depend on this wallet.");
     PauseWithMessage("Press any key to continue...");
 }

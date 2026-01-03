@@ -593,11 +593,7 @@ void AppController::EditWallet(const std::string& id, const std::string& newName
 bool AppController::DeleteWallet(const std::string& id) {
     std::lock_guard<std::recursive_mutex> lock(dataMutex);
 
-    for (size_t i = 0; i < transactions->Count(); ++i) {
-        if (transactions->Get(i)->GetWalletId() == id) {
-            return false; 
-        }
-    }
+    if (!(*walletIndex->Get(id))->IsEmpty()) return false;
     
     for (size_t i = 0; i < recurringTransactions->Count(); ++i) {
         if (recurringTransactions->Get(i)->GetWalletId() == id) {
@@ -622,13 +618,7 @@ bool AppController::DeleteWallet(const std::string& id) {
 bool AppController::DeleteCategory(const std::string& id) {
     std::lock_guard<std::recursive_mutex> lock(dataMutex);
     
-    for (size_t i = 0; i < transactions->Count(); ++i) {
-        Transaction* t = transactions->Get(i);
-
-        if (t->GetType() == TransactionType::Expense && t->GetCategoryId() == id) {
-            return false; 
-        }
-    }
+    if (!(*categoryIndex->Get(id))->IsEmpty()) return false;
     
     for (size_t i = 0; i < recurringTransactions->Count(); ++i) {
         RecurringTransaction* rt = recurringTransactions->Get(i);
@@ -669,13 +659,7 @@ void AppController::EditIncomeSource(const std::string& id, const std::string& n
 bool AppController::DeleteIncomeSource(const std::string& id) {
     std::lock_guard<std::recursive_mutex> lock(dataMutex);
     
-    for (size_t i = 0; i < transactions->Count(); ++i) {
-        Transaction* t = transactions->Get(i);
-
-        if (t->GetType() == TransactionType::Income && t->GetCategoryId() == id) {
-            return false; 
-        }
-    }
+    if (!(*incomeSourceIndex->Get(id))->IsEmpty()) return false;
     
     for (size_t i = 0; i < recurringTransactions->Count(); ++i) {
         RecurringTransaction* rt = recurringTransactions->Get(i);
@@ -861,3 +845,5 @@ void AppController::ClearDatabase() {
 
     if (view) view->ShowSuccess("All data has been wiped successfully.");
 }
+
+// [TODO]: EditTransaction() use Remove() is O(n), optimize by BinarySearch
